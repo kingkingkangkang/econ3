@@ -1,0 +1,30 @@
+name: 웹페이지 배포
+
+# 처음 설정할 때, 또는 docs 폴더를 직접 고쳤을 때 페이지를 다시 올려요.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["docs/**"]
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - id: deployment
+        uses: actions/deploy-pages@v4

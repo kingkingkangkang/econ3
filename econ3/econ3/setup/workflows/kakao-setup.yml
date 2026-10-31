@@ -1,0 +1,29 @@
+name: 카카오 연결 (최초 1회)
+
+on:
+  workflow_dispatch:
+    inputs:
+      code:
+        description: "카카오 인증 코드 (웹페이지에 나온 코드)"
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  connect:
+    runs-on: ubuntu-latest
+    env:
+      KAKAO_REST_API_KEY: ${{ secrets.KAKAO_REST_API_KEY }}
+      KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+      KAKAO_REDIRECT_URI: ${{ secrets.KAKAO_REDIRECT_URI }}
+      GH_PAT: ${{ secrets.GH_PAT }}
+      AUTH_CODE: ${{ github.event.inputs.code }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: 카카오 토큰 발급·저장, 테스트 메시지
+        run: python -m news.main kakao-setup --code "$AUTH_CODE"
