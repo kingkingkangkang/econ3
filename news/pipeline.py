@@ -60,7 +60,7 @@ def collect(win: Window) -> list[dict]:
 
 
 # ── 2. 이슈 묶기·점수 ───────────────────────────────────
-SCORE_KEYS = {"impact": 30, "korea": 25, "novelty": 20, "followup": 15, "explainability": 10}
+SCORE_KEYS = config.SCORE_WEIGHTS
 
 
 def score(win: Window, candidates: list[dict]) -> list[dict]:
@@ -117,10 +117,14 @@ def read(url: str) -> dict:
 def find_source(win: Window, issue: dict) -> dict | None:
     print(f"  · {issue['issue_id']} 자료 찾기: {issue['summary_en'][:70]}")
     try:
-        return _find_source(win, issue)
+        src = _find_source(win, issue)
     except (claude.ClaudeError, ValueError) as e:
         print(f"    → 실패로 건너뜀 — {str(e)[:150]}")
+        issue["exclude_reason"] = "자료를 찾는 중 오류가 나서 건너뜀"
         return None
+    if src is None:
+        issue.setdefault("exclude_reason", "무료 본문·원래 발표 자료를 찾지 못함")
+    return src
 
 
 def _find_source(win: Window, issue: dict) -> dict | None:
@@ -204,6 +208,8 @@ def cross_check(win: Window, issue: dict) -> dict | None:
         by_dom.setdefault(a["domain"], a)
     if len(by_dom) < config.TIER3_MIN_OUTLETS:
         print(f"    → 제외: 무료 본문 없음, 다룬 매체 {len(by_dom)}곳 (3곳 이상 필요)")
+        issue["exclude_reason"] = (f"무료 본문·원래 발표 자료를 찾지 못했고, 다룬 매체가 {len(by_dom)}곳뿐이라 "
+                                   f"교차 확인({config.TIER3_MIN_OUTLETS}곳 이상)도 할 수 없음")
         return None
 
     readings = []
@@ -221,7 +227,9 @@ def cross_check(win: Window, issue: dict) -> dict | None:
         system=prompts.CHECK_SYSTEM, max_tokens=3000,
     )
     if not data.get("consistent") or data.get("conflicts"):
-        print(f"    → 제외: 매체 간 내용 불일치 ({str(data.get('conflicts', ''))[:80]})")
+        conflict = str(data.get("conflicts", "")).strip()[:80]
+        print(f"    → 제외: 매체 간 내용 불일치 ({conflict})")
+        issue["exclude_reason"] = "무료 본문이 없고, 매체마다 내용이 달라 교차 확인 실패" + (f" ({conflict})" if conflict else "")
         return None
 
     points = {o.get("outlet"): o.get("key_points", "") for o in data.get("outlets", []) if isinstance(o, dict)}
@@ -293,7 +301,11 @@ def select(issues: list[dict], source_fn: Callable[[dict], dict | None]) -> list
 
 
 # ── 4. 한국어 요약 ─────────────────────────────────────
-def write(win: Window, chosen: list[tuple[dict, dict]]) -> list[dict]:
+def write(win: Window, chosen: list[tuple[dict, dict]], failed: list[dict] | None = None) -> tuple[list[dict], list[dict]]:
+    failed = sorted(failed or [], key=sort_key)
+    ex_items = [{"id": f"e{n}", "summary_en": i["summary_en"],
+                 "headlines": [f"[{a['outlet']}] {a['title']}" for a in i["articles"]]}
+                for n, i in enumerate(failed, 1)]
     items, content = [], []
     for n, (issue, src) in enumerate(chosen, 1):
         items.append({
@@ -306,7 +318,7 @@ def write(win: Window, chosen: list[tuple[dict, dict]]) -> list[dict]:
             content.append({"type": "document",
                             "source": {"type": "text", "media_type": "text/plain", "data": doc["text"][:MAX_DOC_CHARS]},
                             "title": f"기사 {n} 본문 — {src['source_name']}"})
-    content.append({"type": "text", "text": prompts.write_prompt(label(win.issue_date), items)})
+    content.append({"type": "text", "text": prompts.write_prompt(label(win.issue_date), items, ex_items)})
 
     data, _ = claude.call_json(
         "4. 요약 쓰기", config.WRITE_MODEL, [{"role": "user", "content": content}],
@@ -324,6 +336,7 @@ def write(win: Window, chosen: list[tuple[dict, dict]]) -> list[dict]:
             notice = default_notice(src)
         out.append({
             "slot": len(out) + 1,
+            "orig_slot": len(out) + 1,
             "category": issue["category"],
             "category_label": config.CATEGORY_LABELS[issue["category"]],
             "title_ko": w.get("title_ko", "").strip(),
@@ -339,8 +352,21 @@ def write(win: Window, chosen: list[tuple[dict, dict]]) -> list[dict]:
             "link_outlet": src["link_outlet"],
             "link_paid": src["link_paid"],
             "score": issue["total"],
+            "scores": issue["scores"],
         })
-    return out
+
+    ko = {e.get("id"): e for e in data.get("excluded", []) if isinstance(e, dict)}
+    excluded = [{
+        "category": i["category"],
+        "category_label": config.CATEGORY_LABELS[i["category"]],
+        "score": i["total"],
+        "scores": i["scores"],
+        "summary_ko": str(ko.get(ex["id"], {}).get("summary_ko", "")).strip() or i["summary_en"],
+        "about_ko": str(ko.get(ex["id"], {}).get("about_ko", "")).strip(),
+        "outlets": sorted({a["outlet"] for a in i["articles"]}),
+        "reason": i.get("exclude_reason", ""),
+    } for ex, i in zip(ex_items, failed)]
+    return out, excluded
 
 
 def default_notice(src: dict) -> str:
@@ -356,19 +382,21 @@ def default_notice(src: dict) -> str:
 
 
 # ── 전체 실행 ──────────────────────────────────────────
-def run(win: Window) -> list[dict]:
+def run(win: Window) -> tuple[list[dict], list[dict]]:
+    """반환: (선정 기사, 자료를 못 찾아 제외된 이슈)"""
     print(f"[수집 범위] {win.describe()}")
     print("[1/4] 후보 수집")
     candidates = collect(win)
     if not candidates:
-        return []
+        return [], []
     print("[2/4] 이슈 묶기·점수")
     issues = score(win, candidates)
     print("[3/4] 자료 찾기·선정")
     chosen = select(issues, lambda i: find_source(win, i))
     for issue, src in chosen:
         print(f"  · 선정: [{issue['category']}] {issue['total']}점, {src['tier']}단계 — {issue['summary_en'][:70]}")
-    if not chosen:
-        return []
+    failed = [i for i in issues if i.get("exclude_reason")]
+    if not chosen and not failed:
+        return [], []
     print("[4/4] 한국어 요약")
-    return write(win, chosen)
+    return write(win, chosen, failed)

@@ -1,0 +1,141 @@
+{% extends "_base.html" %}
+{% block title %}휴지통 · {{ site_title }}{% endblock %}
+{% block body %}
+<p class="crumb"><a href="./index.html">← 전체 월 목록</a></p>
+<header class="top">
+  <div>
+    <p class="eyebrow">{{ site_title }}</p>
+    <h1>휴지통</h1>
+    <p class="range">지운 뉴스는 {{ keep_days }}일 동안 보관된 뒤 영구 삭제돼요.</p>
+  </div>
+  {% if groups %}
+  <div class="top-actions">
+    <button type="button" class="icon-btn" id="edit-toggle" aria-label="편집" title="편집" aria-pressed="false">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+      </svg>
+    </button>
+  </div>
+  {% endif %}
+</header>
+
+{% if groups %}
+<ul class="list" id="trash-list">
+  {% for g in groups %}
+  <li class="trash-item" data-date="{{ g.date }}">
+    <div class="trash-head">
+      <span class="d"><span class="pick" aria-hidden="true"></span>{{ g.label }}{% if g.whole %} <span class="chip warn">하루 전체</span>{% endif %}</span>
+    </div>
+    {% for x in g.lines %}
+    <span class="t tline" data-id="{{ x.id }}"><span class="pick" aria-hidden="true"></span>{% if x.num %}{{ x.num }}. {% endif %}{{ x.title }}
+      <span class="left" data-expires="{{ x.expires_at }}"></span></span>
+    {% endfor %}
+  </li>
+  {% endfor %}
+</ul>
+
+<div class="edit-bar" id="edit-bar" hidden>
+  {% include "_gh.html" %}
+  <p class="edit-msg" id="edit-msg" role="status"></p>
+  <div class="edit-actions">
+    <span id="sel-count">선택 0개</span>
+    <button type="button" class="primary" id="btn-restore" disabled>복구</button>
+    <button type="button" class="danger" id="btn-purge" disabled>삭제</button>
+  </div>
+</div>
+{% else %}
+<div class="empty">휴지통이 비어 있어요.</div>
+{% endif %}
+
+<script>
+(function(){
+  // 남은 보관 기간을 지금 시각 기준으로 계산해요
+  function daysLeft(iso){ var n = Math.ceil((new Date(iso) - new Date()) / 86400000); return isNaN(n) ? null : Math.max(n, 0); }
+  document.querySelectorAll("[data-expires]").forEach(function(el){
+    var n = daysLeft(el.dataset.expires); if(n !== null) el.textContent = "(" + n + "일 남음)";
+  });
+  var toggle = document.getElementById("edit-toggle");
+  if(!toggle) return;
+  var list = document.getElementById("trash-list"), bar = document.getElementById("edit-bar");
+  var msg = document.getElementById("edit-msg");
+  var countEl = document.getElementById("sel-count");
+  var restoreBtn = document.getElementById("btn-restore"), purgeBtn = document.getElementById("btn-purge");
+  var confirming = false;
+
+  function editing(){ return document.body.classList.contains("editing"); }
+  function selected(){ return Array.prototype.map.call(list.querySelectorAll(".tline.sel"), function(el){ return el.dataset.id; }); }
+  function syncCards(){
+    list.querySelectorAll(".trash-item").forEach(function(card){
+      var lines = card.querySelectorAll(".tline"), on = card.querySelectorAll(".tline.sel").length;
+      card.classList.toggle("sel", lines.length > 0 && on === lines.length);
+    });
+  }
+  function refresh(){
+    syncCards();
+    var n = selected().length;
+    countEl.textContent = "선택 " + n + "개";
+    restoreBtn.disabled = purgeBtn.disabled = n === 0;
+    confirming = false; purgeBtn.textContent = "삭제";
+  }
+  function setEditing(on){
+    document.body.classList.toggle("editing", on);
+    toggle.setAttribute("aria-pressed", on ? "true" : "false");
+    bar.hidden = !on;
+    if(!on){
+      list.querySelectorAll(".sel").forEach(function(el){ el.classList.remove("sel"); });
+      document.getElementById("token-box").hidden = true; msg.textContent = "";
+    }
+    refresh();
+  }
+  toggle.addEventListener("click", function(){ setEditing(!editing()); });
+  list.addEventListener("click", function(e){
+    if(!editing()) return;
+    var line = e.target.closest(".tline"), card = e.target.closest(".trash-item");
+    if(line){
+      line.classList.toggle("sel");
+    } else if(card){  // 날짜(칸)를 누르면 그날 지운 기사 전체 선택/해제
+      var all = card.querySelectorAll(".tline"), allOn = card.querySelectorAll(".tline.sel").length === all.length;
+      all.forEach(function(l){ l.classList.toggle("sel", !allOn); });
+    }
+    refresh();
+  });
+
+  function run(action, ids, doneText){
+    var token = ECON3.tokenOrAsk(msg);
+    if(!token) return;
+    restoreBtn.disabled = purgeBtn.disabled = true;
+    msg.textContent = "요청하는 중…";
+    ECON3.dispatch(action, ids, token).then(function(res){
+      if(res.ok){
+        ids.forEach(function(id){
+          var el = list.querySelector('.tline[data-id="' + id + '"]');
+          if(!el) return;
+          var card = el.closest(".trash-item"); el.remove();
+          if(!card.querySelector(".tline")) card.remove();
+        });
+        msg.textContent = doneText;
+      } else {
+        msg.textContent = res.msg;
+      }
+      refresh();
+    });
+  }
+  restoreBtn.addEventListener("click", function(){
+    var ids = selected();
+    if(ids.length) run("restore", ids, "복구를 요청했어요. 1~2분 뒤 원래 날짜의 원래 순서로 다시 나타나요.");
+  });
+  purgeBtn.addEventListener("click", function(){
+    var ids = selected();
+    if(!ids.length) return;
+    if(!confirming){
+      confirming = true;
+      purgeBtn.textContent = "정말 삭제 (" + ids.length + "개)";
+      msg.textContent = "한 번 더 누르면 영구 삭제해요. 되돌릴 수 없어요.";
+      return;
+    }
+    run("purge", ids, "영구 삭제를 요청했어요. 1~2분 뒤 반영돼요.");
+  });
+})();
+</script>
+{% endblock %}

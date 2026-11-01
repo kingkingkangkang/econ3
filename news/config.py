@@ -69,7 +69,10 @@ HUMAN_FREE_LINK_DOMAINS = ["finance.yahoo.com", "cnbc.com"]
 # ── 선정 규칙 ───────────────────────────────────────────
 CATEGORIES = ["macro", "market", "corporate"]
 CATEGORY_LABELS = {"macro": "거시·정책", "market": "시장", "corporate": "기업·산업"}
-EVENT_RANK = {"decision": 0, "statement": 1, "analysis": 2}  # 동점일 때: 발표·결정 > 발언·전망 > 해설
+EVENT_RANK = {"decision": 0, "statement": 1, "analysis": 2}
+# 점수표 (합계 100). prompts.py의 score_prompt 설명과 함께 바꿔요.
+SCORE_WEIGHTS = {"impact": 40, "korea": 25, "novelty": 20, "followup": 15}
+SCORE_LABELS = {"impact": "파급력", "korea": "한국 연관성", "novelty": "새로움", "followup": "후속성"}  # 동점일 때: 발표·결정 > 발언·전망 > 해설
 WEAK_SCORE = 50          # 분야 최고점이 이보다 낮으면 다른 분야 차점으로 채워요
 MAX_PER_CATEGORY = 2     # 한 분야 최대 개수
 MAX_SOURCING_ATTEMPTS = 8  # 본문 찾기를 시도할 이슈 최대 개수 (비용 상한)

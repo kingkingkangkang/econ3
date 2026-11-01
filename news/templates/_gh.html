@@ -1,0 +1,43 @@
+<div class="token-box" id="token-box" hidden>
+  <label for="token-input"><strong>GitHub 토큰</strong> (econ3 저장소, Actions: Read and write 권한)</label>
+  <input id="token-input" type="password" autocomplete="off" placeholder="github_pat_...">
+  <p class="token-note">이 브라우저에만 저장돼요. <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">토큰 만들기</a></p>
+</div>
+<script>
+// 지우기·복구 요청: GitHub의 「뉴스 지우기·복구」 워크플로를 실행해요.
+window.ECON3 = (function(){
+  var REPO = {{ repo|tojson }} || (function(){
+    var owner = location.hostname.split(".")[0];
+    var seg = location.pathname.split("/").filter(Boolean)[0] || "";
+    return owner + "/" + (seg && !/\.html$/.test(seg) && !/^\d{4}-\d{2}$/.test(seg) ? seg : owner + ".github.io");
+  })();
+  var KEY = "econ3.ghToken";
+  var box = document.getElementById("token-box"), input = document.getElementById("token-input");
+  function getToken(){ try{ return localStorage.getItem(KEY) || ""; }catch(e){ return ""; } }
+  function setToken(v){ try{ v ? localStorage.setItem(KEY, v) : localStorage.removeItem(KEY); }catch(e){} }
+  function tokenOrAsk(msgEl){
+    var t = getToken() || input.value.trim();
+    if(!t){ box.hidden = false; input.focus(); msgEl.textContent = "처음 한 번만 GitHub 토큰을 입력해 주세요."; }
+    return t;
+  }
+  function hint(status){
+    return status === 401 ? "토큰이 틀렸거나 만료됐어요." :
+           status === 403 ? "토큰 권한을 확인해 주세요 (econ3 저장소, Actions: Read and write)." :
+           status === 404 ? "워크플로(.github/workflows/delete.yml)가 없거나 토큰이 이 저장소에 접근할 수 없어요." :
+           status === 422 ? "워크플로 파일이 최신이 아니에요. delete.yml을 새 버전으로 바꿔 주세요." : "오류가 났어요.";
+  }
+  function dispatch(action, targets, token){
+    return fetch("https://api.github.com/repos/" + REPO + "/actions/workflows/delete.yml/dispatches", {
+      method: "POST",
+      headers: {"Accept": "application/vnd.github+json", "Authorization": "Bearer " + token,
+                "X-GitHub-Api-Version": "2022-11-28", "Content-Type": "application/json"},
+      body: JSON.stringify({ref: "main", inputs: {action: action, targets: targets.join(",")}})
+    }).then(function(r){
+      if(r.status === 204){ setToken(token); input.value = ""; box.hidden = true; return {ok: true}; }
+      if(r.status === 401) setToken("");
+      return {ok: false, msg: hint(r.status) + " (HTTP " + r.status + ")"};
+    }).catch(function(){ return {ok: false, msg: "네트워크 오류로 요청하지 못했어요."}; });
+  }
+  return {getToken: getToken, setToken: setToken, tokenOrAsk: tokenOrAsk, dispatch: dispatch};
+})();
+</script>

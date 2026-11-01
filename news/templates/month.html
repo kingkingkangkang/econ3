@@ -1,0 +1,120 @@
+{% extends "_base.html" %}
+{% block title %}{{ month_title }} · {{ site_title }}{% endblock %}
+{% block body %}
+<p class="crumb"><a href="../index.html">← 전체 월 목록</a></p>
+<header class="top">
+  <div>
+    <p class="eyebrow">{{ site_title }} · {{ month }}</p>
+    <h1>{{ month_title }}</h1>
+    <p class="range">평일 아침 8시, 주요 경제뉴스 3개</p>
+  </div>
+  <div class="top-actions">
+    <a class="icon-btn" href="../trash.html" aria-label="휴지통" title="휴지통">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/>
+      </svg>
+      {% if trash_count %}<span class="badge">{{ trash_count }}</span>{% endif %}
+    </a>
+    <button type="button" class="icon-btn" id="edit-toggle" aria-label="편집" title="편집" aria-pressed="false">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<p class="edit-help" id="edit-help" hidden>지울 날짜나 기사를 눌러 선택하세요. 날짜를 누르면 그날 전체가 선택돼요. 지운 항목은 휴지통에 15일 동안 보관돼요.</p>
+
+<ul class="list" id="issue-list">
+  {% for it in issues %}
+  <li class="day" data-date="{{ it.date }}">
+    <a class="day-link" href="./{{ it.date }}.html">
+      <span class="d" data-target="{{ it.date }}"><span class="pick" aria-hidden="true"></span>{{ it.label }}</span>
+      {% for x in it.arts %}
+      <span class="t" data-target="{{ it.date }}#{{ x.slot }}"><span class="pick" aria-hidden="true"></span>{{ x.slot }}. {{ x.title }}</span>
+      {% endfor %}
+      {% if not it.arts %}<span class="t muted-line">선정 기사 없음</span>{% endif %}
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+
+<div class="edit-bar" id="edit-bar" hidden>
+  {% include "_gh.html" %}
+  <p class="edit-msg" id="edit-msg" role="status"></p>
+  <div class="edit-actions">
+    <span id="sel-count">선택 0개</span>
+    <button type="button" class="ghost" id="edit-cancel">취소</button>
+    <button type="button" class="danger" id="edit-delete" disabled>휴지통으로</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var toggle = document.getElementById("edit-toggle");
+  var bar = document.getElementById("edit-bar"), help = document.getElementById("edit-help");
+  var delBtn = document.getElementById("edit-delete"), countEl = document.getElementById("sel-count");
+  var msg = document.getElementById("edit-msg");
+  function editing(){ return document.body.classList.contains("editing"); }
+  function targets(){
+    var out = [];
+    document.querySelectorAll(".day").forEach(function(day){
+      var d = day.querySelector(".d");
+      if(d.classList.contains("sel")){ out.push(d.dataset.target); return; }
+      day.querySelectorAll(".t.sel").forEach(function(t){ out.push(t.dataset.target); });
+    });
+    return out;
+  }
+  function refresh(){
+    var n = targets().length;
+    countEl.textContent = "선택 " + n + "개";
+    delBtn.disabled = n === 0;
+  }
+  function setEditing(on){
+    document.body.classList.toggle("editing", on);
+    toggle.setAttribute("aria-pressed", on ? "true" : "false");
+    bar.hidden = !on; help.hidden = !on;
+    if(!on){
+      document.querySelectorAll(".sel").forEach(function(el){ el.classList.remove("sel"); });
+      document.querySelectorAll(".day.whole").forEach(function(el){ el.classList.remove("whole"); });
+      document.getElementById("token-box").hidden = true; msg.textContent = "";
+    }
+    refresh();
+  }
+  toggle.addEventListener("click", function(){ setEditing(!editing()); });
+  document.getElementById("edit-cancel").addEventListener("click", function(){ setEditing(false); });
+  document.getElementById("issue-list").addEventListener("click", function(e){
+    if(!editing()) return;
+    e.preventDefault();  // 편집 중에는 페이지로 이동하지 않아요
+    var item = e.target.closest(".d, .t[data-target]");
+    if(!item) return;
+    item.classList.toggle("sel");
+    if(item.classList.contains("d")) item.closest(".day").classList.toggle("whole", item.classList.contains("sel"));
+    refresh();
+  });
+  delBtn.addEventListener("click", function(){
+    var list = targets();
+    if(!list.length) return;
+    var token = ECON3.tokenOrAsk(msg);
+    if(!token) return;
+    delBtn.disabled = true;
+    msg.textContent = "휴지통으로 옮기는 중…";
+    ECON3.dispatch("delete", list, token).then(function(res){
+      if(res.ok){
+        list.forEach(function(t){
+          var el = document.querySelector('[data-target="' + t + '"]');
+          if(!el) return;
+          if(el.classList.contains("d")) el.closest(".day").remove(); else el.remove();
+        });
+        msg.textContent = "휴지통으로 옮겼어요. 1~2분 뒤 새로고침하면 반영돼요. 15일 안에는 휴지통에서 복구할 수 있어요.";
+      } else {
+        msg.textContent = res.msg;
+      }
+      refresh();
+    });
+  });
+})();
+</script>
+{% endblock %}

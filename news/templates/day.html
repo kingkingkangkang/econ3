@@ -20,8 +20,12 @@
     <span class="num">{{ a.slot }}</span>
     <span class="chip {{ a.category }}">{{ a.category_label }}</span>
     {% if a.notice %}<span class="chip warn">특이사항</span>{% endif %}
+    {% if a.score is defined %}<span class="score">{{ a.score }}점</span>{% endif %}
   </div>
   <h2>{{ a.title_ko }}</h2>
+  {% if a.scores %}
+  <p class="scorebar">{% for k, w in score_weights.items() %}{{ score_labels[k] }} {{ a.scores.get(k, 0) }}/{{ w }}{% if not loop.last %} · {% endif %}{% endfor %}</p>
+  {% endif %}
   <p class="what">{{ a.what }}</p>
   {% if a.details %}
   <ul class="details">
@@ -56,8 +60,28 @@
 <div class="empty">오늘은 선정 기준을 통과한 기사가 없어요.</div>
 {% endif %}
 
+{% if excluded %}
+<section class="excluded" aria-labelledby="ex-title">
+  <h3 id="ex-title">제외</h3>
+  <p class="ex-desc">점수는 높았지만 요약할 자료를 찾지 못해 빠진 이슈예요.</p>
+  <ul>
+    {% for x in excluded %}
+    <li>
+      <div class="meta">
+        <span class="chip {{ x.category }}">{{ x.category_label }}</span>
+        <span class="score">{{ x.score }}점</span>
+      </div>
+      <p class="ex-sum">{{ x.summary_ko }}</p>
+      {% if x.about_ko %}<p class="ex-about">{{ x.about_ko }}{% if x.outlets %} <span class="ex-src">(헤드라인 기준 · {{ x.outlets|join('·') }})</span>{% endif %}</p>{% endif %}
+      <p class="ex-reason">빠진 이유: {{ x.reason }}</p>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
 <footer class="site">
-  <p>{{ outlet_count }}개 매체({{ outlet_names }})의 기사 중 파급력·한국 연관성·새로움·후속성·설명 가능성 점수로 골랐어요. 특이사항 표시 기사는 무료 본문 없이 3개 이상 매체를 교차 확인해 요약했어요.</p>
-  <p><a href="./index.html">지난 뉴스 모아보기 →</a></p>
+  <p>{{ outlet_count }}개 매체({{ outlet_names }})의 기사 중 파급력(40)·한국 연관성(25)·새로움(20)·후속성(15) 점수로 골랐어요. 특이사항 표시 기사는 무료 본문 없이 3개 이상 매체를 교차 확인해 요약했어요.</p>
+  <p><a href="./index.html">{{ month }} 뉴스 모아보기 →</a> · <a href="../index.html">전체 월 목록</a></p>
 </footer>
 {% endblock %}

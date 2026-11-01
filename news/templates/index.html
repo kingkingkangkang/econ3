@@ -1,9 +1,20 @@
 {% extends "_base.html" %}
 {% block body %}
-<header>
-  <p class="eyebrow">{{ site_title }}</p>
-  <h1>지난 뉴스 모아보기</h1>
-  <p class="range">평일 아침 8시, 주요 경제뉴스 3개</p>
+<header class="top">
+  <div>
+    <p class="eyebrow">{{ site_title }}</p>
+    <h1>지난 뉴스 모아보기</h1>
+    <p class="range">평일 아침 8시, 주요 경제뉴스 3개</p>
+  </div>
+  <div class="top-actions">
+    <a class="icon-btn" href="./trash.html" aria-label="휴지통" title="휴지통">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/>
+      </svg>
+      {% if trash_count %}<span class="badge">{{ trash_count }}</span>{% endif %}
+    </a>
+  </div>
 </header>
 
 <!-- 카카오 최초 연결: 로그인 후 이 페이지로 돌아오면 인증 코드를 보여줘요 -->
@@ -14,15 +25,16 @@
   <button type="button" id="kakao-copy">복사</button>
 </div>
 
-{% if issues %}
+{% if months %}
 <ul class="list">
-  {% for it in issues %}
-  <li><a href="./{{ it.date }}.html">
-    <span class="d">{{ it.label }}</span>
-    {% for t in it.titles %}<span class="t">{{ loop.index }}. {{ t }}</span>{% endfor %}
+  {% for m in months %}
+  <li><a href="./{{ m.month }}/index.html" class="month-card">
+    <span class="d">{{ m.month }}</span>
+    <span class="t">최근 {{ m.latest }}</span>
   </a></li>
   {% endfor %}
 </ul>
+<p class="hint-line">달을 누르면 그 달의 날짜별 뉴스가 나와요. 지우기는 각 달 화면의 연필 버튼에서 할 수 있어요.</p>
 {% else %}
 <div class="empty">아직 발행된 뉴스가 없어요. 첫 발송 후 여기에 쌓여요.</div>
 {% endif %}
@@ -32,11 +44,11 @@
   try{
     var code = new URLSearchParams(location.search).get("code");
     if(!code) return;
-    var box = document.getElementById("kakao-code");
     document.getElementById("kakao-code-value").textContent = code;
-    box.hidden = false;
+    document.getElementById("kakao-code").hidden = false;
     document.getElementById("kakao-copy").addEventListener("click", function(){
-      navigator.clipboard.writeText(code).then(function(){ this.textContent = "복사됨"; }.bind(this));
+      var btn = this;
+      navigator.clipboard.writeText(code).then(function(){ btn.textContent = "복사됨"; });
     });
   }catch(e){}
 })();
