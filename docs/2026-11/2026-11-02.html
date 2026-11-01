@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>11/2(월) 오늘의 경제 3</title>
+<script>
+// 지우기·복구 직후 10분 동안은 다른 페이지도 브라우저 캐시 대신 최신 버전으로 열어요.
+(function(){
+  try{
+    var t = +localStorage.getItem("econ3.editedAt") || 0;
+    if(!t || Date.now() - t > 600000) return;
+    var q = new URLSearchParams(location.search);
+    if(q.get("v") === String(t)) return;
+    q.set("v", String(t));
+    location.replace(location.pathname + "?" + q.toString() + location.hash);
+  }catch(e){}
+})();
+</script>
+<style>
+:root{
+  --bg:#f5f4f0; --card:#ffffff; --text:#1d1d1f; --muted:#6b6b70; --line:#e6e4de;
+  --macro:#2f5fd0; --macro-bg:#e8eefc;
+  --market:#1f8a5b; --market-bg:#e3f4ec;
+  --corporate:#7a4cc2; --corporate-bg:#f0e9fb;
+  --korea-bg:#f2f6ff; --korea-line:#c9d7f7;
+  --warn:#9a5b00; --warn-bg:#fff4e0; --warn-line:#f1d29a;
+  --btn:#1d1d1f; --btn-text:#ffffff;
+  --danger:#c62828;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#121214; --card:#1c1c1f; --text:#ececef; --muted:#a0a0a8; --line:#2c2c31;
+    --macro:#8fb0ff; --macro-bg:#1d2a48;
+    --market:#6fd3a3; --market-bg:#173327;
+    --corporate:#c4a5f5; --corporate-bg:#2c2140;
+    --korea-bg:#1a2233; --korea-line:#2e3d5e;
+    --warn:#f3c26b; --warn-bg:#33270f; --warn-line:#5a4519;
+    --btn:#ececef; --btn-text:#121214;
+    --danger:#ff6b6b;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR","Malgun Gothic",sans-serif;
+  font-size:16px;line-height:1.65;word-break:keep-all;overflow-wrap:anywhere}
+.wrap{max-width:640px;margin:0 auto;padding:20px 16px 48px}
+a{color:inherit}
+.eyebrow{margin:0;font-size:13px;font-weight:700;letter-spacing:.02em;color:var(--muted)}
+h1{margin:4px 0 2px;font-size:26px;line-height:1.3}
+.range{margin:0;font-size:13px;color:var(--muted)}
+.toc{margin:18px 0 8px;padding:0;list-style:none;display:grid;gap:6px}
+.toc a{display:flex;gap:10px;align-items:baseline;text-decoration:none;padding:10px 12px;background:var(--card);
+  border:1px solid var(--line);border-radius:12px;font-size:15px;line-height:1.45}
+.toc .n{font-weight:800;color:var(--muted);min-width:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 16px;margin-top:14px;scroll-margin-top:12px}
+.meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.num{width:24px;height:24px;border-radius:50%;background:var(--text);color:var(--card);display:inline-flex;
+  align-items:center;justify-content:center;font-size:13px;font-weight:800}
+.chip{font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px}
+.chip.macro{color:var(--macro);background:var(--macro-bg)}
+.chip.market{color:var(--market);background:var(--market-bg)}
+.chip.corporate{color:var(--corporate);background:var(--corporate-bg)}
+.chip.warn{color:var(--warn);background:var(--warn-bg)}
+.card h2{margin:10px 0 6px;font-size:20px;line-height:1.4}
+.score{margin-left:auto;font-size:13px;font-weight:800;padding:3px 9px;border-radius:999px;background:var(--bg);border:1px solid var(--line)}
+.scorebar{margin:-2px 0 8px;font-size:12px;color:var(--muted)}
+.excluded{margin-top:22px;padding:16px;background:var(--card);border:1px dashed var(--line);border-radius:16px}
+.excluded h3{margin:0;font-size:17px}
+.ex-desc{margin:2px 0 8px;font-size:13px;color:var(--muted)}
+.excluded ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.excluded li{padding-top:10px;border-top:1px solid var(--line)}
+.excluded li:first-child{border-top:0;padding-top:0}
+.ex-sum{margin:6px 0 2px;font-weight:600;font-size:15px}
+.ex-about{margin:2px 0 4px;font-size:14px}
+.ex-src{color:var(--muted);font-size:12px}
+.ex-reason{margin:0;font-size:13px;color:var(--muted)}
+.what{margin:0 0 8px;font-weight:600}
+.details{margin:0;padding-left:18px}
+.details li{margin:4px 0}
+.glossary{margin-top:10px;font-size:14px;border-top:1px dashed var(--line);padding-top:8px}
+.glossary summary{cursor:pointer;color:var(--muted);font-weight:700}
+.glossary dt{font-weight:700;margin-top:6px}
+.glossary dd{margin:0;color:var(--muted)}
+.korea{margin-top:12px;padding:10px 12px;background:var(--korea-bg);border:1px solid var(--korea-line);border-radius:10px;font-size:15px}
+.korea strong{color:var(--macro);margin-right:4px}
+.notice{margin-top:10px;padding:10px 12px;background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:10px;font-size:14px}
+.notice strong{color:var(--warn)}
+.notice p{margin:4px 0 0}
+.src{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;font-size:13px;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:6px;text-decoration:none;background:var(--btn);color:var(--btn-text);
+  padding:8px 12px;border-radius:10px;font-size:14px;font-weight:700}
+.paid{font-size:11px;font-weight:800;padding:2px 6px;border-radius:6px;background:var(--warn-bg);color:var(--warn)}
+.empty{margin-top:18px;padding:16px;background:var(--card);border:1px solid var(--line);border-radius:16px}
+.site{margin-top:28px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+.site a{font-weight:700}
+.list{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:10px}
+.list a{display:block;text-decoration:none;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.list .d{font-weight:800}
+.list .t{display:block;font-size:14px;color:var(--muted);margin-top:2px}
+.code-box{margin-top:16px;padding:16px;background:var(--card);border:2px solid var(--macro);border-radius:16px}
+.code-box code{display:block;margin:8px 0;padding:10px;background:var(--bg);border-radius:8px;font-size:14px;word-break:break-all}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.top-actions{display:flex;gap:8px;flex:none}
+.crumb{margin:0 0 10px;font-size:13px}
+.crumb a{color:var(--muted);text-decoration:none;font-weight:700}
+a.icon-btn{text-decoration:none;position:relative}
+.badge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;
+  background:var(--danger);color:#fff;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+.chip{color:var(--muted);background:var(--bg)}
+.m-title{font-weight:600;color:var(--muted);font-size:14px;margin-left:4px}
+.list .t.sub{font-size:13px}
+.muted-line{font-style:italic}
+.hint-line{margin:12px 0 0;font-size:13px;color:var(--muted)}
+.trash-item{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.trash-item .t{display:block;font-size:14px;color:var(--muted);margin-top:2px}
+.trash-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.trash-head .d{font-weight:800}
+
+.icon-btn{flex:none;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;
+  border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
+.icon-btn[aria-pressed="true"]{background:var(--text);color:var(--card)}
+.pick{display:none}
+body.editing .pick{display:inline-block;width:16px;height:16px;border:2px solid var(--muted);border-radius:4px;
+  margin-right:8px;vertical-align:-3px}
+body.editing .day .sel .pick,body.editing .day.whole .pick{background:var(--danger);border-color:var(--danger)}
+body.editing .day .sel,body.editing .day.whole .t{text-decoration:line-through;color:var(--danger)}
+body.editing .trash-item{cursor:pointer}
+body.editing .trash-item.sel{border-color:var(--text);box-shadow:inset 0 0 0 1px var(--text)}
+body.editing .trash-item.sel .trash-head .pick,body.editing .tline.sel .pick{background:var(--text);border-color:var(--text)}
+body.editing .tline.sel{color:var(--text);font-weight:600}
+.tline .left{font-size:12px;margin-left:4px}
+.primary{background:var(--btn);color:var(--btn-text);border-color:var(--btn)!important}
+.primary:disabled{opacity:.4;cursor:default}
+body.editing .day-link{cursor:pointer;border-style:dashed}
+.edit-help{margin:12px 0 0;font-size:13px;color:var(--muted)}
+.edit-bar{position:sticky;bottom:12px;margin-top:16px;padding:12px;background:var(--card);border:1px solid var(--line);
+  border-radius:14px;box-shadow:0 4px 18px rgba(0,0,0,.12)}
+.edit-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.edit-actions span{margin-right:auto;font-size:14px;font-weight:700}
+.edit-actions button{font:inherit;font-size:14px;font-weight:700;padding:8px 12px;border-radius:10px;
+  border:1px solid var(--line);cursor:pointer}
+.ghost{background:transparent;color:var(--text)}
+.danger{background:var(--danger);color:#fff;border-color:var(--danger)!important}
+.danger:disabled{opacity:.4;cursor:default}
+.edit-msg{margin:0 0 8px;font-size:13px;color:var(--muted)}
+.edit-msg:empty{display:none}
+.token-box{margin-bottom:10px;font-size:13px}
+.token-box input{display:block;width:100%;margin-top:6px;padding:10px;border-radius:10px;border:1px solid var(--line);
+  background:var(--bg);color:var(--text);font:inherit}
+.token-note{margin:6px 0 0;color:var(--muted)}
+.code-box button{font:inherit;font-weight:700;padding:8px 14px;border-radius:10px;border:0;background:var(--btn);color:var(--btn-text)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">오늘의 경제 3</p>
+  <h1>11월 2일 월요일</h1>
+  <p class="range">수집 범위: 10/30(금) 08:00 ~ 11/2(월) 08:00 한국시간</p>
+</header>
+
+
+<ol class="toc">
+  
+  <li><a href="#a1"><span class="n">1</span><span>빅테크 AI 투자 부담에 나스닥 6월 이후 최악</span></a></li>
+  
+  <li><a href="#a2"><span class="n">2</span><span>일본은행 동결에도 엔화 강세, 달러는 주춤</span></a></li>
+  
+  <li><a href="#a3"><span class="n">3</span><span>인텔, 약한 4분기 전망에 주가 29% 급락</span></a></li>
+  
+</ol>
+
+
+<article class="card" id="a1">
+  <div class="meta">
+    <span class="num">1</span>
+    <span class="chip market">시장</span>
+    
+    <span class="score">85점</span>
+  </div>
+  <h2>빅테크 AI 투자 부담에 나스닥 6월 이후 최악</h2>
+  
+  <p class="scorebar">파급력 38/40 · 한국 연관성 18/25 · 새로움 18/20 · 후속성 11/15</p>
+  
+  <p class="what">지난 금요일(10/30) 미국 증시가 아마존·알파벳 실적 실망과 AI 투자비 우려로 크게 떨어지며 10월을 마감했어요.</p>
+  
+  <ul class="details">
+    <li>나스닥은 2.8% 내려 6월 5일 이후 가장 큰 하루 낙폭을 기록했어요. 다우지수는 1.2%(600포인트 넘게), S&amp;P 500은 약 2% 하락했어요.</li><li>아마존과 알파벳이 드물게 시장 기대에 못 미치는 실적을 내면서 &#39;AI 붐이 계속될 수 있을까&#39;라는 걱정이 다시 커졌어요. 알파벳 주가는 전날 20년 넘는 기간 중 최악의 하루를 보냈어요.</li><li>아마존은 최근 12개월간 잉여현금흐름이 420억 달러 넘게 마이너스였어요. 역대 최대 적자 폭이고, 3분기 한 분기에만 설비 투자로 약 770억 달러를 썼어요.</li><li>인텔은 4분기 전망이 기대에 못 미쳐 장 시작 전 거래에서 약 29% 급락했어요.</li><li>10월 한 달로 보면 나스닥은 약 5% 하락해 2025년 3월 이후 가장 부진했어요. S&amp;P 500은 1.2% 내렸고 다우는 1.5% 올랐어요.</li><li>중동 전쟁 여파로 국제유가가 다시 올랐어요. 브렌트유는 배럴당 112달러, WTI는 104달러까지 올랐고, 엑슨모빌과 셰브런은 정제 마진이 커져 주가가 한때 사상 최고치를 찍었어요.</li><li>암호화폐 거래소 바이낸스에서 63억 달러 규모 해킹이 터지며 비트코인도 약세였어요. 바이낸스는 피해를 회사 자금으로 모두 보전하겠다고 밝혔어요.</li><li>연준 위원 두 명은 물가를 잡으려면 금리를 더 올려야 한다고 말했어요. 9월 물가 지표도 올라 12월 금리 인상 기대가 굳어지고 있어요.</li><li>트러스트의 키스 러너 최고투자책임자는 10월에 하락한 업종이 기술·통신서비스뿐이라며, 이번 하락은 전체 시장이 아닌 일부 쏠림 조정이라고 봤어요. 기술주가 2~8% 더 내릴 수는 있지만 장기 상승 흐름은 유지된다는 의견이에요.</li>
+  </ul>
+  
+  
+  <details class="glossary">
+    <summary>용어 풀이</summary>
+    <dl>
+      <dt>잉여현금흐름</dt><dd>회사가 영업으로 번 돈에서 설비·건물 등 투자에 쓴 돈을 뺀 뒤 남는 현금이에요.</dd><dt>브렌트유</dt><dd>국제 원유 가격의 기준이 되는 대표 유종이에요.</dd>
+    </dl>
+  </details>
+  
+  <div class="korea"><strong>한국엔?</strong>미국 기술주 급락은 오늘 국내 반도체·IT 대형주 투자심리에도 부담이 될 수 있어요.</div>
+  
+  <div class="src">
+    <span>출처: Yahoo Finance</span>
+    <span>
+      
+      <a class="btn" href="https://finance.yahoo.com/markets/live/stock-market-today-friday-october-30-dow-sp-500-nasdaq-amazon-intel-ai-sell-off-191429143.html" target="_blank" rel="noopener">원문 보기 · Yahoo Finance</a>
+    </span>
+  </div>
+</article>
+
+<article class="card" id="a2">
+  <div class="meta">
+    <span class="num">2</span>
+    <span class="chip market">시장</span>
+    
+    <span class="score">59점</span>
+  </div>
+  <h2>일본은행 동결에도 엔화 강세, 달러는 주춤</h2>
+  
+  <p class="scorebar">파급력 22/40 · 한국 연관성 15/25 · 새로움 13/20 · 후속성 9/15</p>
+  
+  <p class="what">일본은행이 금리를 동결하면서도 매파적(금리 인상에 적극적인) 신호를 내 엔화가 올랐고, 미국 국채 금리 하락이 달러를 눌렀어요.</p>
+  
+  <ul class="details">
+    <li>일본은행은 기준금리를 1.25%로 동결했어요. 시장이 예상한 결과예요. 다만 물가 전망은 올렸고, 몇 달에 한 번씩 금리를 올릴 수 있는 새 국면에 들어섰다고 밝혔어요.</li><li>엔화는 달러당 157.51엔으로 사흘 연속 올랐어요. 하지만 10월 한 달로는 하락세예요. FXStreet의 분석가는 시장이 일본은행에 조금 실망했고, 미 연준의 금리 기조가 엔화 강세를 제한한다고 말했어요.</li><li>TS롬바드는 일본은행이 12월, 내년 3월, 7월에 금리를 올려 2%까지 갈 것으로 내다봤어요.</li><li>이번 주 유럽중앙은행, 연준, 뉴질랜드 중앙은행도 모두 금리를 동결했어요. 끈질긴 물가와 빡빡해진 금융 환경 때문에 상황을 지켜보는 모습이에요.</li><li>AI 투자 우려로 기술주가 빠지면서 미국 국채 금리가 내렸어요. 보통 위험을 피할 때는 달러가 오르지만, 이번에는 금리 하락 영향이 더 커서 달러인덱스는 101.88로 보합이었어요. 그래도 2개월 연속 상승이 예상돼요.</li><li>유로는 1.1168달러로 지난 목요일 2025년 5월 이후 최저치를 찍었어요. 바클레이즈는 달러 약세 덕에 유로가 받는 지지가 유로존 성장 부진 탓에 오래가지 못할 수 있다고 봤어요.</li>
+  </ul>
+  
+  
+  <details class="glossary">
+    <summary>용어 풀이</summary>
+    <dl>
+      <dt>국채 금리 하락</dt><dd>국채 가격이 오르면서 금리가 내리는 현상으로, 불안할 때 안전한 국채로 돈이 몰리면 나타나요.</dd><dt>달러인덱스</dt><dd>달러 가치를 유로·엔 등 주요 6개 통화와 비교해 보여주는 지수예요.</dd>
+    </dl>
+  </details>
+  
+  <div class="korea"><strong>한국엔?</strong>일본의 금리 인상 기대와 달러 움직임은 엔화뿐 아니라 원/달러 환율에도 영향을 줄 수 있어요.</div>
+  
+  <div class="src">
+    <span>출처: Yahoo Finance (Reuters)</span>
+    <span>
+      
+      <a class="btn" href="https://finance.yahoo.com/markets/currencies/articles/yen-steady-boj-ai-jitters-015222078.html" target="_blank" rel="noopener">원문 보기 · Yahoo Finance</a>
+    </span>
+  </div>
+</article>
+
+<article class="card" id="a3">
+  <div class="meta">
+    <span class="num">3</span>
+    <span class="chip corporate">기업·산업</span>
+    
+    <span class="score">82점</span>
+  </div>
+  <h2>인텔, 약한 4분기 전망에 주가 29% 급락</h2>
+  
+  <p class="scorebar">파급력 32/40 · 한국 연관성 22/25 · 새로움 17/20 · 후속성 11/15</p>
+  
+  <p class="what">인텔이 3분기 실적은 기대를 넘었지만 4분기 전망이 시장 예상을 크게 밑돌고 PC 시장 부진도 경고하면서 주가가 급락했어요.</p>
+  
+  <ul class="details">
+    <li>인텔 주가는 오전 거래에서 28.9% 떨어졌어요.</li><li>3분기 매출은 165억 1천만 달러로 1년 전보다 20.9% 늘었고, 조정 주당순이익은 0.52달러였어요. 둘 다 월가 예상을 웃돌았어요.</li><li>하지만 4분기 매출 전망은 150억~160억 달러로, 중간값(155억 달러)이 분석가 예상치 170억 2천만 달러보다 낮았어요. 조정 주당순이익 전망도 0.25달러로 예상치 0.44달러에 못 미쳤어요.</li><li>데이비드 진스너 최고재무책임자는 PC 시장 부진이 적어도 내년 상반기까지 이어질 것으로 봤어요.</li><li>립부 탄 CEO는 고객사들이 메모리 가격과 공급 문제 때문에 PC 수요가 둔화될 것이라는 신호를 보냈다고 말했어요. 올해 PC 가격이 크게 올라 제한된 IT 예산에 부담이 된다는 설명이에요.</li>
+  </ul>
+  
+  
+  <details class="glossary">
+    <summary>용어 풀이</summary>
+    <dl>
+      <dt>가이던스</dt><dd>회사가 직접 내놓는 다음 분기·연간 실적 전망이에요.</dd><dt>조정 주당순이익(non-GAAP EPS)</dt><dd>일회성 비용 등을 빼고 계산한 주식 1주당 이익이에요.</dd>
+    </dl>
+  </details>
+  
+  <div class="korea"><strong>한국엔?</strong>메모리 가격 때문에 PC 수요가 줄고 있다는 인텔의 진단은 PC용 메모리를 파는 국내 반도체 업체에도 영향을 줄 수 있어요.</div>
+  
+  <div class="src">
+    <span>출처: Yahoo Finance</span>
+    <span>
+      
+      <a class="btn" href="https://finance.yahoo.com/markets/stocks/articles/why-intel-intc-stock-trading-151529235.html" target="_blank" rel="noopener">원문 보기 · Yahoo Finance</a>
+    </span>
+  </div>
+</article>
+
+
+
+
+
+
+<footer class="site">
+  <p>5개 매체(Bloomberg·Nikkei Asia·CNN Business·CNBC·Yahoo Finance)의 기사 중 파급력(40)·한국 연관성(25)·새로움(20)·후속성(15) 점수로 골랐어요. 특이사항 표시 기사는 무료 본문 없이 3개 이상 매체를 교차 확인해 요약했어요.</p>
+  <p><a href="../index.html">지난 뉴스 모아보기 →</a></p>
+</footer>
+
+</div>
+</body>
+</html>
