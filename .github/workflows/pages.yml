@@ -1,30 +1,50 @@
 name: 웹페이지 배포
 
-# 처음 설정할 때, 또는 docs 폴더를 직접 고쳤을 때 페이지를 다시 올려요.
+# 처음 설정할 때, 디자인(news/templates)을 바꿨을 때 실행해요. 저장된 기록으로 모든 페이지를 다시 만들어 올려요.
 on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ["docs/**"]
+    paths: ["docs/**", "news/templates/**"]
 
 concurrency:
-  group: pages
-  cancel-in-progress: true
+  group: daily-news
+  cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: 페이지 다시 만들기
+        run: python -m news.main rebuild
+      - name: 기록 저장
+        run: |
+          git config user.name "econ3-bot"
+          git config user.email "econ3-bot@users.noreply.github.com"
+          git add -A docs
+          git commit -m "페이지 다시 만들기" || echo "변경 없음"
+          git push
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
       pages: write
       id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: docs
       - id: deployment
         uses: actions/deploy-pages@v4

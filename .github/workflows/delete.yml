@@ -1,0 +1,68 @@
+name: 뉴스 지우기·복구
+
+# 월별 뉴스 페이지의 연필 버튼(지우기)과 휴지통 페이지의 복구 버튼에서 실행돼요.
+# Actions 탭에서 직접 실행해도 돼요.
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "delete = 휴지통으로 / restore = 휴지통에서 복구 / purge = 휴지통에서 영구 삭제"
+        type: choice
+        options: [delete, restore, purge]
+        default: delete
+      targets:
+        description: "지우기: 2026-11-01(하루 전체) 또는 2026-11-01#2(기사 하나) / 복구·영구 삭제: 휴지통 항목 번호 — 여러 개는 쉼표로"
+        required: true
+
+concurrency:
+  group: daily-news
+  cancel-in-progress: false
+
+jobs:
+  manage:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      ACTION: ${{ github.event.inputs.action }}
+      TARGETS: ${{ github.event.inputs.targets }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+
+      - name: 지우기·복구·영구 삭제
+        run: |
+          case "$ACTION" in
+            restore) python -m news.main restore --targets "$TARGETS" ;;
+            purge)   python -m news.main purge --targets "$TARGETS" ;;
+            *)       python -m news.main delete --targets "$TARGETS" ;;
+          esac
+
+      - name: 기록 저장
+        run: |
+          git config user.name "econ3-bot"
+          git config user.email "econ3-bot@users.noreply.github.com"
+          git add -A docs
+          git commit -m "뉴스 $ACTION: $TARGETS" || echo "변경 없음"
+          git push
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  deploy:
+    needs: manage
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
