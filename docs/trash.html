@@ -152,83 +152,10 @@ body.editing .day-link{cursor:pointer;border-style:dashed}
     <p class="range">지운 뉴스는 15일 동안 보관된 뒤 영구 삭제돼요.</p>
   </div>
   
-  <div class="top-actions">
-    <button type="button" class="icon-btn" id="edit-toggle" aria-label="편집" title="편집" aria-pressed="false">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>
-      </svg>
-    </button>
-  </div>
-  
 </header>
 
 
-<ul class="list" id="trash-list">
-  
-  <li class="trash-item" data-date="2026-11-01">
-    <div class="trash-head">
-      <span class="d"><span class="pick" aria-hidden="true"></span>11/1(일)</span>
-    </div>
-    
-    <span class="t tline" data-id="20261101-2a2c15"><span class="pick" aria-hidden="true"></span>2. AI 주식 급락에 미국 국채로 안전자산 쏠림
-      <span class="left" data-expires="2026-11-16T15:43:10+09:00"></span></span>
-    
-  </li>
-  
-</ul>
-
-<div class="edit-bar" id="edit-bar" hidden>
-  <div class="token-box" id="token-box" hidden>
-  <label for="token-input"><strong>GitHub 토큰</strong> (econ3 저장소, Actions: Read and write 권한)</label>
-  <input id="token-input" type="password" autocomplete="off" placeholder="github_pat_...">
-  <p class="token-note">이 브라우저에만 저장돼요. <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">토큰 만들기</a></p>
-</div>
-<script>
-// 지우기·복구 요청: GitHub의 「뉴스 지우기·복구」 워크플로를 실행해요.
-window.ECON3 = (function(){
-  var REPO = "kingkingkangkang/econ3" || (function(){
-    var owner = location.hostname.split(".")[0];
-    var seg = location.pathname.split("/").filter(Boolean)[0] || "";
-    return owner + "/" + (seg && !/\.html$/.test(seg) && !/^\d{4}-\d{2}$/.test(seg) ? seg : owner + ".github.io");
-  })();
-  var KEY = "econ3.ghToken";
-  var box = document.getElementById("token-box"), input = document.getElementById("token-input");
-  function getToken(){ try{ return localStorage.getItem(KEY) || ""; }catch(e){ return ""; } }
-  function setToken(v){ try{ v ? localStorage.setItem(KEY, v) : localStorage.removeItem(KEY); }catch(e){} }
-  function tokenOrAsk(msgEl){
-    var t = getToken() || input.value.trim();
-    if(!t){ box.hidden = false; input.focus(); msgEl.textContent = "처음 한 번만 GitHub 토큰을 입력해 주세요."; }
-    return t;
-  }
-  function hint(status){
-    return status === 401 ? "토큰이 틀렸거나 만료됐어요." :
-           status === 403 ? "토큰 권한을 확인해 주세요 (econ3 저장소, Actions: Read and write)." :
-           status === 404 ? "워크플로(.github/workflows/delete.yml)가 없거나 토큰이 이 저장소에 접근할 수 없어요." :
-           status === 422 ? "워크플로 파일이 최신이 아니에요. delete.yml을 새 버전으로 바꿔 주세요." : "오류가 났어요.";
-  }
-  function dispatch(action, targets, token){
-    return fetch("https://api.github.com/repos/" + REPO + "/actions/workflows/delete.yml/dispatches", {
-      method: "POST",
-      headers: {"Accept": "application/vnd.github+json", "Authorization": "Bearer " + token,
-                "X-GitHub-Api-Version": "2022-11-28", "Content-Type": "application/json"},
-      body: JSON.stringify({ref: "main", inputs: {action: action, targets: targets.join(",")}})
-    }).then(function(r){
-      if(r.status === 204){ setToken(token); input.value = ""; box.hidden = true; return {ok: true}; }
-      if(r.status === 401) setToken("");
-      return {ok: false, msg: hint(r.status) + " (HTTP " + r.status + ")"};
-    }).catch(function(){ return {ok: false, msg: "네트워크 오류로 요청하지 못했어요."}; });
-  }
-  return {getToken: getToken, setToken: setToken, tokenOrAsk: tokenOrAsk, dispatch: dispatch};
-})();
-</script>
-  <p class="edit-msg" id="edit-msg" role="status"></p>
-  <div class="edit-actions">
-    <span id="sel-count">선택 0개</span>
-    <button type="button" class="primary" id="btn-restore" disabled>복구</button>
-    <button type="button" class="danger" id="btn-purge" disabled>삭제</button>
-  </div>
-</div>
+<div class="empty">휴지통이 비어 있어요.</div>
 
 
 <script>
