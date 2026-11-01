@@ -4,7 +4,7 @@
 
 ```
 07:40  GitHub Actions 자동 시작
-  ├ 1. 13개 매체에서 후보 기사 수집 (Claude Haiku + 웹검색)
+  ├ 1. 5개 매체에서 후보 기사 수집 (Claude Haiku + 웹검색)
   ├ 2. 같은 이슈 묶기, 100점 점수 매기기 (Claude Sonnet)
   ├ 3. 요약에 쓸 자료 찾기: 무료 본문 → 원래 발표 자료 → 3개 매체 교차 확인(특이사항) → 제외
   ├ 4. 한국어 요약 쓰기 (Claude Sonnet)
@@ -81,7 +81,7 @@ Claude Team 플랜 Standard 좌석에는 매달 1인당 $20의 API 크레딧이 
 **방법 B: 개인 결제**
 Claude 콘솔(platform.claude.com) 가입 → 결제 수단 등록·크레딧 충전 → **API Keys** → **Create Key**
 
-만든 키(`sk-ant-...`)는 한 번만 보여요. 바로 5번에서 등록하세요.
+만든 키(`sk-ant-...`)는 한 번만 보여요. 바로 6번에서 등록하세요.
 
 ---
 
@@ -148,7 +148,7 @@ Claude 콘솔(platform.claude.com) 가입 → 결제 수단 등록·크레딧 �
 | 바꿀 것 | 파일 |
 |---|---|
 | 발송 시각 | `news/config.py`의 `SEND_HOUR` + `.github/workflows/daily.yml`의 `cron` (UTC 기준, 시작은 20분 전) |
-| 매체 목록, 모델, 점수 기준값 | `news/config.py` |
+| 매체 목록, 모델, 점수 기준값 | `news/config.py` (추가한 매체가 막혀 있으면 실행 중 자동으로 빠져요) |
 | 기사 선정·요약 규칙 문장 | `news/prompts.py` |
 | 웹페이지 디자인 | `news/templates/` |
 
@@ -166,7 +166,8 @@ Claude 콘솔(platform.claude.com) 가입 → 결제 수단 등록·크레딧 �
 
 ## 기사 선정 기준 (요약)
 
-- **매체 13곳**: 유료 WSJ·FT·Bloomberg·The Economist·Barron's·Nikkei Asia·Reuters·CNN Business / 무료 CNBC·AP·Yahoo Finance·The Guardian·BBC
+- **매체 5곳**: 유료 Bloomberg·Nikkei Asia·CNN Business / 무료 CNBC·Yahoo Finance (Yahoo에는 Reuters·AP 기사도 실려요)
+  - WSJ·FT·The Economist·Barron's·Reuters·AP·The Guardian·BBC는 Anthropic의 자동 접근을 막아두어 쓸 수 없어요. 막힌 매체는 실행 중에 자동으로 빠져요.
 - **수집 범위**: 화~금은 전날 08:00부터 24시간, 월요일은 금요일 08:00부터 (한국시간)
 - **점수(100)**: 파급력 30, 한국 연관성 25, 새로움 20, 후속성 15, 설명 가능성 10
 - **동점**: 실제 발표·결정 > 발언·전망 > 해설·분석
