@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>2026년 11월 · 오늘의 경제 3</title>
+<style>
+:root{
+  --bg:#f5f4f0; --card:#ffffff; --text:#1d1d1f; --muted:#6b6b70; --line:#e6e4de;
+  --macro:#2f5fd0; --macro-bg:#e8eefc;
+  --market:#1f8a5b; --market-bg:#e3f4ec;
+  --corporate:#7a4cc2; --corporate-bg:#f0e9fb;
+  --korea-bg:#f2f6ff; --korea-line:#c9d7f7;
+  --warn:#9a5b00; --warn-bg:#fff4e0; --warn-line:#f1d29a;
+  --btn:#1d1d1f; --btn-text:#ffffff;
+  --danger:#c62828;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#121214; --card:#1c1c1f; --text:#ececef; --muted:#a0a0a8; --line:#2c2c31;
+    --macro:#8fb0ff; --macro-bg:#1d2a48;
+    --market:#6fd3a3; --market-bg:#173327;
+    --corporate:#c4a5f5; --corporate-bg:#2c2140;
+    --korea-bg:#1a2233; --korea-line:#2e3d5e;
+    --warn:#f3c26b; --warn-bg:#33270f; --warn-line:#5a4519;
+    --btn:#ececef; --btn-text:#121214;
+    --danger:#ff6b6b;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR","Malgun Gothic",sans-serif;
+  font-size:16px;line-height:1.65;word-break:keep-all;overflow-wrap:anywhere}
+.wrap{max-width:640px;margin:0 auto;padding:20px 16px 48px}
+a{color:inherit}
+.eyebrow{margin:0;font-size:13px;font-weight:700;letter-spacing:.02em;color:var(--muted)}
+h1{margin:4px 0 2px;font-size:26px;line-height:1.3}
+.range{margin:0;font-size:13px;color:var(--muted)}
+.toc{margin:18px 0 8px;padding:0;list-style:none;display:grid;gap:6px}
+.toc a{display:flex;gap:10px;align-items:baseline;text-decoration:none;padding:10px 12px;background:var(--card);
+  border:1px solid var(--line);border-radius:12px;font-size:15px;line-height:1.45}
+.toc .n{font-weight:800;color:var(--muted);min-width:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 16px;margin-top:14px;scroll-margin-top:12px}
+.meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.num{width:24px;height:24px;border-radius:50%;background:var(--text);color:var(--card);display:inline-flex;
+  align-items:center;justify-content:center;font-size:13px;font-weight:800}
+.chip{font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px}
+.chip.macro{color:var(--macro);background:var(--macro-bg)}
+.chip.market{color:var(--market);background:var(--market-bg)}
+.chip.corporate{color:var(--corporate);background:var(--corporate-bg)}
+.chip.warn{color:var(--warn);background:var(--warn-bg)}
+.card h2{margin:10px 0 6px;font-size:20px;line-height:1.4}
+.score{margin-left:auto;font-size:13px;font-weight:800;padding:3px 9px;border-radius:999px;background:var(--bg);border:1px solid var(--line)}
+.scorebar{margin:-2px 0 8px;font-size:12px;color:var(--muted)}
+.excluded{margin-top:22px;padding:16px;background:var(--card);border:1px dashed var(--line);border-radius:16px}
+.excluded h3{margin:0;font-size:17px}
+.ex-desc{margin:2px 0 8px;font-size:13px;color:var(--muted)}
+.excluded ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.excluded li{padding-top:10px;border-top:1px solid var(--line)}
+.excluded li:first-child{border-top:0;padding-top:0}
+.ex-sum{margin:6px 0 2px;font-weight:600;font-size:15px}
+.ex-about{margin:2px 0 4px;font-size:14px}
+.ex-src{color:var(--muted);font-size:12px}
+.ex-reason{margin:0;font-size:13px;color:var(--muted)}
+.what{margin:0 0 8px;font-weight:600}
+.details{margin:0;padding-left:18px}
+.details li{margin:4px 0}
+.glossary{margin-top:10px;font-size:14px;border-top:1px dashed var(--line);padding-top:8px}
+.glossary summary{cursor:pointer;color:var(--muted);font-weight:700}
+.glossary dt{font-weight:700;margin-top:6px}
+.glossary dd{margin:0;color:var(--muted)}
+.korea{margin-top:12px;padding:10px 12px;background:var(--korea-bg);border:1px solid var(--korea-line);border-radius:10px;font-size:15px}
+.korea strong{color:var(--macro);margin-right:4px}
+.notice{margin-top:10px;padding:10px 12px;background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:10px;font-size:14px}
+.notice strong{color:var(--warn)}
+.notice p{margin:4px 0 0}
+.src{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;font-size:13px;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:6px;text-decoration:none;background:var(--btn);color:var(--btn-text);
+  padding:8px 12px;border-radius:10px;font-size:14px;font-weight:700}
+.paid{font-size:11px;font-weight:800;padding:2px 6px;border-radius:6px;background:var(--warn-bg);color:var(--warn)}
+.empty{margin-top:18px;padding:16px;background:var(--card);border:1px solid var(--line);border-radius:16px}
+.site{margin-top:28px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+.site a{font-weight:700}
+.list{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:10px}
+.list a{display:block;text-decoration:none;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.list .d{font-weight:800}
+.list .t{display:block;font-size:14px;color:var(--muted);margin-top:2px}
+.code-box{margin-top:16px;padding:16px;background:var(--card);border:2px solid var(--macro);border-radius:16px}
+.code-box code{display:block;margin:8px 0;padding:10px;background:var(--bg);border-radius:8px;font-size:14px;word-break:break-all}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.top-actions{display:flex;gap:8px;flex:none}
+.crumb{margin:0 0 10px;font-size:13px}
+.crumb a{color:var(--muted);text-decoration:none;font-weight:700}
+a.icon-btn{text-decoration:none;position:relative}
+.badge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;
+  background:var(--danger);color:#fff;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+.chip{color:var(--muted);background:var(--bg)}
+.m-title{font-weight:600;color:var(--muted);font-size:14px;margin-left:4px}
+.list .t.sub{font-size:13px}
+.muted-line{font-style:italic}
+.hint-line{margin:12px 0 0;font-size:13px;color:var(--muted)}
+.trash-item{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.trash-item .t{display:block;font-size:14px;color:var(--muted);margin-top:2px}
+.trash-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.trash-head .d{font-weight:800}
+
+.icon-btn{flex:none;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;
+  border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
+.icon-btn[aria-pressed="true"]{background:var(--text);color:var(--card)}
+.pick{display:none}
+body.editing .pick{display:inline-block;width:16px;height:16px;border:2px solid var(--muted);border-radius:4px;
+  margin-right:8px;vertical-align:-3px}
+body.editing .day .sel .pick,body.editing .day.whole .pick{background:var(--danger);border-color:var(--danger)}
+body.editing .day .sel,body.editing .day.whole .t{text-decoration:line-through;color:var(--danger)}
+body.editing .trash-item{cursor:pointer}
+body.editing .trash-item.sel{border-color:var(--text);box-shadow:inset 0 0 0 1px var(--text)}
+body.editing .trash-item.sel .trash-head .pick,body.editing .tline.sel .pick{background:var(--text);border-color:var(--text)}
+body.editing .tline.sel{color:var(--text);font-weight:600}
+.tline .left{font-size:12px;margin-left:4px}
+.primary{background:var(--btn);color:var(--btn-text);border-color:var(--btn)!important}
+.primary:disabled{opacity:.4;cursor:default}
+body.editing .day-link{cursor:pointer;border-style:dashed}
+.edit-help{margin:12px 0 0;font-size:13px;color:var(--muted)}
+.edit-bar{position:sticky;bottom:12px;margin-top:16px;padding:12px;background:var(--card);border:1px solid var(--line);
+  border-radius:14px;box-shadow:0 4px 18px rgba(0,0,0,.12)}
+.edit-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.edit-actions span{margin-right:auto;font-size:14px;font-weight:700}
+.edit-actions button{font:inherit;font-size:14px;font-weight:700;padding:8px 12px;border-radius:10px;
+  border:1px solid var(--line);cursor:pointer}
+.ghost{background:transparent;color:var(--text)}
+.danger{background:var(--danger);color:#fff;border-color:var(--danger)!important}
+.danger:disabled{opacity:.4;cursor:default}
+.edit-msg{margin:0 0 8px;font-size:13px;color:var(--muted)}
+.edit-msg:empty{display:none}
+.token-box{margin-bottom:10px;font-size:13px}
+.token-box input{display:block;width:100%;margin-top:6px;padding:10px;border-radius:10px;border:1px solid var(--line);
+  background:var(--bg);color:var(--text);font:inherit}
+.token-note{margin:6px 0 0;color:var(--muted)}
+.code-box button{font:inherit;font-weight:700;padding:8px 14px;border-radius:10px;border:0;background:var(--btn);color:var(--btn-text)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<p class="crumb"><a href="../index.html">← 전체 월 목록</a></p>
+<header class="top">
+  <div>
+    <p class="eyebrow">오늘의 경제 3 · 2026-11</p>
+    <h1>2026년 11월</h1>
+    <p class="range">평일 아침 8시, 주요 경제뉴스 3개</p>
+  </div>
+  <div class="top-actions">
+    <a class="icon-btn" href="../trash.html" aria-label="휴지통" title="휴지통">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/>
+      </svg>
+      
+    </a>
+    <button type="button" class="icon-btn" id="edit-toggle" aria-label="편집" title="편집" aria-pressed="false">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<p class="edit-help" id="edit-help" hidden>지울 날짜나 기사를 눌러 선택하세요. 날짜를 누르면 그날 전체가 선택돼요. 지운 항목은 휴지통에 15일 동안 보관돼요.</p>
+
+<ul class="list" id="issue-list">
+  
+  <li class="day" data-date="2026-11-01">
+    <a class="day-link" href="./2026-11-01.html">
+      <span class="d" data-target="2026-11-01"><span class="pick" aria-hidden="true"></span>11/1(일)</span>
+      
+      <span class="t" data-target="2026-11-01#1"><span class="pick" aria-hidden="true"></span>1. 연준 인사들 &#34;금리 더 올려야&#34;…12월 인상 가능성 커져</span>
+      
+      <span class="t" data-target="2026-11-01#2"><span class="pick" aria-hidden="true"></span>2. AI주 급락에 미국 국채로 안전자산 쏠림</span>
+      
+      <span class="t" data-target="2026-11-01#3"><span class="pick" aria-hidden="true"></span>3. 엑슨모빌·셰브런, 정제마진 급등에 실적 호조</span>
+      
+      
+    </a>
+  </li>
+  
+</ul>
+
+<div class="edit-bar" id="edit-bar" hidden>
+  <div class="token-box" id="token-box" hidden>
+  <label for="token-input"><strong>GitHub 토큰</strong> (econ3 저장소, Actions: Read and write 권한)</label>
+  <input id="token-input" type="password" autocomplete="off" placeholder="github_pat_...">
+  <p class="token-note">이 브라우저에만 저장돼요. <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">토큰 만들기</a></p>
+</div>
+<script>
+// 지우기·복구 요청: GitHub의 「뉴스 지우기·복구」 워크플로를 실행해요.
+window.ECON3 = (function(){
+  var REPO = "kingkingkangkang/econ3" || (function(){
+    var owner = location.hostname.split(".")[0];
+    var seg = location.pathname.split("/").filter(Boolean)[0] || "";
+    return owner + "/" + (seg && !/\.html$/.test(seg) && !/^\d{4}-\d{2}$/.test(seg) ? seg : owner + ".github.io");
+  })();
+  var KEY = "econ3.ghToken";
+  var box = document.getElementById("token-box"), input = document.getElementById("token-input");
+  function getToken(){ try{ return localStorage.getItem(KEY) || ""; }catch(e){ return ""; } }
+  function setToken(v){ try{ v ? localStorage.setItem(KEY, v) : localStorage.removeItem(KEY); }catch(e){} }
+  function tokenOrAsk(msgEl){
+    var t = getToken() || input.value.trim();
+    if(!t){ box.hidden = false; input.focus(); msgEl.textContent = "처음 한 번만 GitHub 토큰을 입력해 주세요."; }
+    return t;
+  }
+  function hint(status){
+    return status === 401 ? "토큰이 틀렸거나 만료됐어요." :
+           status === 403 ? "토큰 권한을 확인해 주세요 (econ3 저장소, Actions: Read and write)." :
+           status === 404 ? "워크플로(.github/workflows/delete.yml)가 없거나 토큰이 이 저장소에 접근할 수 없어요." :
+           status === 422 ? "워크플로 파일이 최신이 아니에요. delete.yml을 새 버전으로 바꿔 주세요." : "오류가 났어요.";
+  }
+  function dispatch(action, targets, token){
+    return fetch("https://api.github.com/repos/" + REPO + "/actions/workflows/delete.yml/dispatches", {
+      method: "POST",
+      headers: {"Accept": "application/vnd.github+json", "Authorization": "Bearer " + token,
+                "X-GitHub-Api-Version": "2022-11-28", "Content-Type": "application/json"},
+      body: JSON.stringify({ref: "main", inputs: {action: action, targets: targets.join(",")}})
+    }).then(function(r){
+      if(r.status === 204){ setToken(token); input.value = ""; box.hidden = true; return {ok: true}; }
+      if(r.status === 401) setToken("");
+      return {ok: false, msg: hint(r.status) + " (HTTP " + r.status + ")"};
+    }).catch(function(){ return {ok: false, msg: "네트워크 오류로 요청하지 못했어요."}; });
+  }
+  return {getToken: getToken, setToken: setToken, tokenOrAsk: tokenOrAsk, dispatch: dispatch};
+})();
+</script>
+  <p class="edit-msg" id="edit-msg" role="status"></p>
+  <div class="edit-actions">
+    <span id="sel-count">선택 0개</span>
+    <button type="button" class="ghost" id="edit-cancel">취소</button>
+    <button type="button" class="danger" id="edit-delete" disabled>휴지통으로</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  var toggle = document.getElementById("edit-toggle");
+  var bar = document.getElementById("edit-bar"), help = document.getElementById("edit-help");
+  var delBtn = document.getElementById("edit-delete"), countEl = document.getElementById("sel-count");
+  var msg = document.getElementById("edit-msg");
+  function editing(){ return document.body.classList.contains("editing"); }
+  function targets(){
+    var out = [];
+    document.querySelectorAll(".day").forEach(function(day){
+      var d = day.querySelector(".d");
+      if(d.classList.contains("sel")){ out.push(d.dataset.target); return; }
+      day.querySelectorAll(".t.sel").forEach(function(t){ out.push(t.dataset.target); });
+    });
+    return out;
+  }
+  function refresh(){
+    var n = targets().length;
+    countEl.textContent = "선택 " + n + "개";
+    delBtn.disabled = n === 0;
+  }
+  function setEditing(on){
+    document.body.classList.toggle("editing", on);
+    toggle.setAttribute("aria-pressed", on ? "true" : "false");
+    bar.hidden = !on; help.hidden = !on;
+    if(!on){
+      document.querySelectorAll(".sel").forEach(function(el){ el.classList.remove("sel"); });
+      document.querySelectorAll(".day.whole").forEach(function(el){ el.classList.remove("whole"); });
+      document.getElementById("token-box").hidden = true; msg.textContent = "";
+    }
+    refresh();
+  }
+  toggle.addEventListener("click", function(){ setEditing(!editing()); });
+  document.getElementById("edit-cancel").addEventListener("click", function(){ setEditing(false); });
+  document.getElementById("issue-list").addEventListener("click", function(e){
+    if(!editing()) return;
+    e.preventDefault();  // 편집 중에는 페이지로 이동하지 않아요
+    var item = e.target.closest(".d, .t[data-target]");
+    if(!item) return;
+    item.classList.toggle("sel");
+    if(item.classList.contains("d")) item.closest(".day").classList.toggle("whole", item.classList.contains("sel"));
+    refresh();
+  });
+  delBtn.addEventListener("click", function(){
+    var list = targets();
+    if(!list.length) return;
+    var token = ECON3.tokenOrAsk(msg);
+    if(!token) return;
+    delBtn.disabled = true;
+    msg.textContent = "휴지통으로 옮기는 중…";
+    ECON3.dispatch("delete", list, token).then(function(res){
+      if(res.ok){
+        list.forEach(function(t){
+          var el = document.querySelector('[data-target="' + t + '"]');
+          if(!el) return;
+          if(el.classList.contains("d")) el.closest(".day").remove(); else el.remove();
+        });
+        msg.textContent = "휴지통으로 옮겼어요. 1~2분 뒤 새로고침하면 반영돼요. 15일 안에는 휴지통에서 복구할 수 있어요.";
+      } else {
+        msg.textContent = res.msg;
+      }
+      refresh();
+    });
+  });
+})();
+</script>
+
+</div>
+</body>
+</html>
