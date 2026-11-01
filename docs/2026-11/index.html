@@ -5,6 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>2026년 11월 · 오늘의 경제 3</title>
+<script>
+// 지우기·복구 직후 10분 동안은 다른 페이지도 브라우저 캐시 대신 최신 버전으로 열어요.
+(function(){
+  try{
+    var t = +localStorage.getItem("econ3.editedAt") || 0;
+    if(!t || Date.now() - t > 600000) return;
+    var q = new URLSearchParams(location.search);
+    if(q.get("v") === String(t)) return;
+    q.set("v", String(t));
+    location.replace(location.pathname + "?" + q.toString() + location.hash);
+  }catch(e){}
+})();
+</script>
 <style>
 :root{
   --bg:#f5f4f0; --card:#ffffff; --text:#1d1d1f; --muted:#6b6b70; --line:#e6e4de;
@@ -229,7 +242,31 @@ window.ECON3 = (function(){
       return {ok: false, msg: hint(r.status) + " (HTTP " + r.status + ")"};
     }).catch(function(){ return {ok: false, msg: "네트워크 오류로 요청하지 못했어요."}; });
   }
-  return {getToken: getToken, setToken: setToken, tokenOrAsk: tokenOrAsk, dispatch: dispatch};
+  // 반영 기다리기: 몇 초마다 캐시 없이 페이지를 확인하고, 바뀌면 바로 새로고침해요 (브라우저 캐시 10분 우회).
+  function markEdited(){ var t = Date.now(); try{ localStorage.setItem("econ3.editedAt", String(t)); }catch(e){} return t; }
+  function waitLive(msgEl, fallbackUrl){
+    var url = location.href.split("#")[0].split("?")[0];
+    var start = Date.now();
+    function get(){ return fetch(url + "?t=" + Date.now(), {cache: "no-store"}); }
+    get().then(function(r){ return r.ok ? r.text() : ""; }).catch(function(){ return ""; }).then(function(base){
+      var tick = setInterval(function(){
+        var sec = Math.round((Date.now() - start) / 1000);
+        if(sec > 240){ clearInterval(tick); msgEl.textContent = "반영이 늦어지고 있어요. 잠시 뒤 새로고침해 주세요."; return; }
+        msgEl.textContent = "반영 중… " + sec + "초 (보통 1분 안팎)";
+        if(sec % 5) return;
+        get().then(function(r){
+          if(r.status === 404){ clearInterval(tick); location.replace((fallbackUrl || "./index.html") + "?v=" + markEdited()); return null; }
+          return r.ok ? r.text() : null;
+        }).then(function(t){
+          if(t != null && base && t !== base){
+            clearInterval(tick); msgEl.textContent = "반영됐어요. 새로고침할게요.";
+            location.replace(url + "?v=" + markEdited());
+          }
+        }).catch(function(){});
+      }, 1000);
+    });
+  }
+  return {getToken: getToken, setToken: setToken, tokenOrAsk: tokenOrAsk, dispatch: dispatch, waitLive: waitLive};
 })();
 </script>
   <p class="edit-msg" id="edit-msg" role="status"></p>
@@ -297,7 +334,8 @@ window.ECON3 = (function(){
           if(!el) return;
           if(el.classList.contains("d")) el.closest(".day").remove(); else el.remove();
         });
-        msg.textContent = "휴지통으로 옮겼어요. 1~2분 뒤 새로고침하면 반영돼요. 15일 안에는 휴지통에서 복구할 수 있어요.";
+        msg.textContent = "휴지통으로 옮겼어요.";
+        ECON3.waitLive(msg, "../index.html");
       } else {
         msg.textContent = res.msg;
       }

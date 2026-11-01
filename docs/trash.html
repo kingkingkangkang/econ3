@@ -5,6 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>휴지통 · 오늘의 경제 3</title>
+<script>
+// 지우기·복구 직후 10분 동안은 다른 페이지도 브라우저 캐시 대신 최신 버전으로 열어요.
+(function(){
+  try{
+    var t = +localStorage.getItem("econ3.editedAt") || 0;
+    if(!t || Date.now() - t > 600000) return;
+    var q = new URLSearchParams(location.search);
+    if(q.get("v") === String(t)) return;
+    q.set("v", String(t));
+    location.replace(location.pathname + "?" + q.toString() + location.hash);
+  }catch(e){}
+})();
+</script>
 <style>
 :root{
   --bg:#f5f4f0; --card:#ffffff; --text:#1d1d1f; --muted:#6b6b70; --line:#e6e4de;
@@ -225,6 +238,7 @@ body.editing .day-link{cursor:pointer;border-style:dashed}
           if(!card.querySelector(".tline")) card.remove();
         });
         msg.textContent = doneText;
+        ECON3.waitLive(msg, "./index.html");
       } else {
         msg.textContent = res.msg;
       }
@@ -233,7 +247,7 @@ body.editing .day-link{cursor:pointer;border-style:dashed}
   }
   restoreBtn.addEventListener("click", function(){
     var ids = selected();
-    if(ids.length) run("restore", ids, "복구를 요청했어요. 1~2분 뒤 원래 날짜의 원래 순서로 다시 나타나요.");
+    if(ids.length) run("restore", ids, "복구를 요청했어요.");
   });
   purgeBtn.addEventListener("click", function(){
     var ids = selected();
@@ -244,7 +258,7 @@ body.editing .day-link{cursor:pointer;border-style:dashed}
       msg.textContent = "한 번 더 누르면 영구 삭제해요. 되돌릴 수 없어요.";
       return;
     }
-    run("purge", ids, "영구 삭제를 요청했어요. 1~2분 뒤 반영돼요.");
+    run("purge", ids, "영구 삭제를 요청했어요.");
   });
 })();
 </script>
