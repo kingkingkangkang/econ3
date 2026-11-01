@@ -1,0 +1,63 @@
+{% extends "_base.html" %}
+{% block title %}{{ label }} {{ site_title }}{% endblock %}
+{% block body %}
+<header>
+  <p class="eyebrow">{{ site_title }}</p>
+  <h1>{{ date_long }}</h1>
+  <p class="range">수집 범위: {{ range_text }}</p>
+</header>
+
+{% if articles %}
+<ol class="toc">
+  {% for a in articles %}
+  <li><a href="#a{{ a.slot }}"><span class="n">{{ a.slot }}</span><span>{{ a.title_ko }}</span></a></li>
+  {% endfor %}
+</ol>
+
+{% for a in articles %}
+<article class="card" id="a{{ a.slot }}">
+  <div class="meta">
+    <span class="num">{{ a.slot }}</span>
+    <span class="chip {{ a.category }}">{{ a.category_label }}</span>
+    {% if a.notice %}<span class="chip warn">특이사항</span>{% endif %}
+  </div>
+  <h2>{{ a.title_ko }}</h2>
+  <p class="what">{{ a.what }}</p>
+  {% if a.details %}
+  <ul class="details">
+    {% for d in a.details %}<li>{{ d }}</li>{% endfor %}
+  </ul>
+  {% endif %}
+  {% if a.glossary %}
+  <details class="glossary">
+    <summary>용어 풀이</summary>
+    <dl>
+      {% for g in a.glossary %}<dt>{{ g.term }}</dt><dd>{{ g.desc }}</dd>{% endfor %}
+    </dl>
+  </details>
+  {% endif %}
+  {% if a.korea %}<div class="korea"><strong>한국엔?</strong>{{ a.korea }}</div>{% endif %}
+  {% if a.notice %}
+  <div class="notice"><strong>※ 특이사항</strong><p>{{ a.notice }}</p></div>
+  {% endif %}
+  <div class="src">
+    <span>출처: {{ a.source_name }}</span>
+    <span>
+      {% if a.link_paid %}<span class="paid">유료</span>{% endif %}
+      <a class="btn" href="{{ a.link_url }}" target="_blank" rel="noopener">원문 보기 · {{ a.link_outlet }}</a>
+    </span>
+  </div>
+</article>
+{% endfor %}
+{% if articles|length < 3 %}
+<div class="empty">오늘은 선정 기준을 통과한 기사가 {{ articles|length }}개예요.</div>
+{% endif %}
+{% else %}
+<div class="empty">오늘은 선정 기준을 통과한 기사가 없어요.</div>
+{% endif %}
+
+<footer class="site">
+  <p>{{ outlet_count }}개 매체({{ outlet_names }})의 기사 중 파급력·한국 연관성·새로움·후속성·설명 가능성 점수로 골랐어요. 특이사항 표시 기사는 무료 본문 없이 3개 이상 매체를 교차 확인해 요약했어요.</p>
+  <p><a href="./index.html">지난 뉴스 모아보기 →</a></p>
+</footer>
+{% endblock %}
