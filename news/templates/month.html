@@ -108,7 +108,8 @@
           if(!el) return;
           if(el.classList.contains("d")) el.closest(".day").remove(); else el.remove();
         });
-        msg.textContent = "휴지통으로 옮겼어요. 1~2분 뒤 새로고침하면 반영돼요. 15일 안에는 휴지통에서 복구할 수 있어요.";
+        msg.textContent = "휴지통으로 옮겼어요.";
+        ECON3.waitLive(msg, "../index.html");
       } else {
         msg.textContent = res.msg;
       }

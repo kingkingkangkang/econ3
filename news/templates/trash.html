@@ -115,6 +115,7 @@
           if(!card.querySelector(".tline")) card.remove();
         });
         msg.textContent = doneText;
+        ECON3.waitLive(msg, "./index.html");
       } else {
         msg.textContent = res.msg;
       }
@@ -123,7 +124,7 @@
   }
   restoreBtn.addEventListener("click", function(){
     var ids = selected();
-    if(ids.length) run("restore", ids, "복구를 요청했어요. 1~2분 뒤 원래 날짜의 원래 순서로 다시 나타나요.");
+    if(ids.length) run("restore", ids, "복구를 요청했어요.");
   });
   purgeBtn.addEventListener("click", function(){
     var ids = selected();
@@ -134,7 +135,7 @@
       msg.textContent = "한 번 더 누르면 영구 삭제해요. 되돌릴 수 없어요.";
       return;
     }
-    run("purge", ids, "영구 삭제를 요청했어요. 1~2분 뒤 반영돼요.");
+    run("purge", ids, "영구 삭제를 요청했어요.");
   });
 })();
 </script>
