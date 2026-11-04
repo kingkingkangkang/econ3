@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>11/5(목) 오늘의 경제 3</title>
+<script>
+// 지우기·복구 직후 10분 동안은 다른 페이지도 브라우저 캐시 대신 최신 버전으로 열어요.
+(function(){
+  try{
+    var t = +localStorage.getItem("econ3.editedAt") || 0;
+    if(!t || Date.now() - t > 600000) return;
+    var q = new URLSearchParams(location.search);
+    if(q.get("v") === String(t)) return;
+    q.set("v", String(t));
+    location.replace(location.pathname + "?" + q.toString() + location.hash);
+  }catch(e){}
+})();
+</script>
+<style>
+:root{
+  --bg:#f5f4f0; --card:#ffffff; --text:#1d1d1f; --muted:#6b6b70; --line:#e6e4de;
+  --macro:#2f5fd0; --macro-bg:#e8eefc;
+  --market:#1f8a5b; --market-bg:#e3f4ec;
+  --corporate:#7a4cc2; --corporate-bg:#f0e9fb;
+  --korea-bg:#f2f6ff; --korea-line:#c9d7f7;
+  --warn:#9a5b00; --warn-bg:#fff4e0; --warn-line:#f1d29a;
+  --btn:#1d1d1f; --btn-text:#ffffff;
+  --danger:#c62828;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#121214; --card:#1c1c1f; --text:#ececef; --muted:#a0a0a8; --line:#2c2c31;
+    --macro:#8fb0ff; --macro-bg:#1d2a48;
+    --market:#6fd3a3; --market-bg:#173327;
+    --corporate:#c4a5f5; --corporate-bg:#2c2140;
+    --korea-bg:#1a2233; --korea-line:#2e3d5e;
+    --warn:#f3c26b; --warn-bg:#33270f; --warn-line:#5a4519;
+    --btn:#ececef; --btn-text:#121214;
+    --danger:#ff6b6b;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR","Malgun Gothic",sans-serif;
+  font-size:16px;line-height:1.65;word-break:keep-all;overflow-wrap:anywhere}
+.wrap{max-width:640px;margin:0 auto;padding:20px 16px 48px}
+a{color:inherit}
+.eyebrow{margin:0;font-size:13px;font-weight:700;letter-spacing:.02em;color:var(--muted)}
+h1{margin:4px 0 2px;font-size:26px;line-height:1.3}
+.range{margin:0;font-size:13px;color:var(--muted)}
+.toc{margin:18px 0 8px;padding:0;list-style:none;display:grid;gap:6px}
+.toc a{display:flex;gap:10px;align-items:baseline;text-decoration:none;padding:10px 12px;background:var(--card);
+  border:1px solid var(--line);border-radius:12px;font-size:15px;line-height:1.45}
+.toc .n{font-weight:800;color:var(--muted);min-width:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 16px;margin-top:14px;scroll-margin-top:12px}
+.meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.num{width:24px;height:24px;border-radius:50%;background:var(--text);color:var(--card);display:inline-flex;
+  align-items:center;justify-content:center;font-size:13px;font-weight:800}
+.chip{font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px}
+.chip.macro{color:var(--macro);background:var(--macro-bg)}
+.chip.market{color:var(--market);background:var(--market-bg)}
+.chip.corporate{color:var(--corporate);background:var(--corporate-bg)}
+.chip.warn{color:var(--warn);background:var(--warn-bg)}
+.card h2{margin:10px 0 6px;font-size:20px;line-height:1.4}
+.score{margin-left:auto;font-size:13px;font-weight:800;padding:3px 9px;border-radius:999px;background:var(--bg);border:1px solid var(--line)}
+.scorebar{margin:-2px 0 8px;font-size:12px;color:var(--muted)}
+.excluded{margin-top:22px;padding:16px;background:var(--card);border:1px dashed var(--line);border-radius:16px}
+.excluded h3{margin:0;font-size:17px}
+.ex-desc{margin:2px 0 8px;font-size:13px;color:var(--muted)}
+.excluded ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.excluded li{padding-top:10px;border-top:1px solid var(--line)}
+.excluded li:first-child{border-top:0;padding-top:0}
+.ex-sum{margin:6px 0 2px;font-weight:600;font-size:15px}
+.ex-about{margin:2px 0 4px;font-size:14px}
+.ex-src{color:var(--muted);font-size:12px}
+.ex-reason{margin:0;font-size:13px;color:var(--muted)}
+.what{margin:0 0 8px;font-weight:600}
+.details{margin:0;padding-left:18px}
+.details li{margin:4px 0}
+.glossary{margin-top:10px;font-size:14px;border-top:1px dashed var(--line);padding-top:8px}
+.glossary summary{cursor:pointer;color:var(--muted);font-weight:700}
+.glossary dt{font-weight:700;margin-top:6px}
+.glossary dd{margin:0;color:var(--muted)}
+.korea{margin-top:12px;padding:10px 12px;background:var(--korea-bg);border:1px solid var(--korea-line);border-radius:10px;font-size:15px}
+.korea strong{color:var(--macro);margin-right:4px}
+.notice{margin-top:10px;padding:10px 12px;background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:10px;font-size:14px}
+.notice strong{color:var(--warn)}
+.notice p{margin:4px 0 0}
+.src{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;font-size:13px;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:6px;text-decoration:none;background:var(--btn);color:var(--btn-text);
+  padding:8px 12px;border-radius:10px;font-size:14px;font-weight:700}
+.paid{font-size:11px;font-weight:800;padding:2px 6px;border-radius:6px;background:var(--warn-bg);color:var(--warn)}
+.empty{margin-top:18px;padding:16px;background:var(--card);border:1px solid var(--line);border-radius:16px}
+.site{margin-top:28px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+.site a{font-weight:700}
+.list{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:10px}
+.list a{display:block;text-decoration:none;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.list .d{font-weight:800}
+.list .t{display:block;font-size:14px;color:var(--muted);margin-top:2px}
+.code-box{margin-top:16px;padding:16px;background:var(--card);border:2px solid var(--macro);border-radius:16px}
+.code-box code{display:block;margin:8px 0;padding:10px;background:var(--bg);border-radius:8px;font-size:14px;word-break:break-all}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.top-actions{display:flex;gap:8px;flex:none}
+.crumb{margin:0 0 10px;font-size:13px}
+.crumb a{color:var(--muted);text-decoration:none;font-weight:700}
+a.icon-btn{text-decoration:none;position:relative}
+.badge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;
+  background:var(--danger);color:#fff;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+.chip{color:var(--muted);background:var(--bg)}
+.m-title{font-weight:600;color:var(--muted);font-size:14px;margin-left:4px}
+.list .t.sub{font-size:13px}
+.muted-line{font-style:italic}
+.hint-line{margin:12px 0 0;font-size:13px;color:var(--muted)}
+.trash-item{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.trash-item .t{display:block;font-size:14px;color:var(--muted);margin-top:2px}
+.trash-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.trash-head .d{font-weight:800}
+
+.icon-btn{flex:none;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;
+  border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
+.icon-btn[aria-pressed="true"]{background:var(--text);color:var(--card)}
+.pick{display:none}
+body.editing .pick{display:inline-block;width:16px;height:16px;border:2px solid var(--muted);border-radius:4px;
+  margin-right:8px;vertical-align:-3px}
+body.editing .day .sel .pick,body.editing .day.whole .pick{background:var(--danger);border-color:var(--danger)}
+body.editing .day .sel,body.editing .day.whole .t{text-decoration:line-through;color:var(--danger)}
+body.editing .trash-item{cursor:pointer}
+body.editing .trash-item.sel{border-color:var(--text);box-shadow:inset 0 0 0 1px var(--text)}
+body.editing .trash-item.sel .trash-head .pick,body.editing .tline.sel .pick{background:var(--text);border-color:var(--text)}
+body.editing .tline.sel{color:var(--text);font-weight:600}
+.tline .left{font-size:12px;margin-left:4px}
+.primary{background:var(--btn);color:var(--btn-text);border-color:var(--btn)!important}
+.primary:disabled{opacity:.4;cursor:default}
+body.editing .day-link{cursor:pointer;border-style:dashed}
+.edit-help{margin:12px 0 0;font-size:13px;color:var(--muted)}
+.edit-bar{position:sticky;bottom:12px;margin-top:16px;padding:12px;background:var(--card);border:1px solid var(--line);
+  border-radius:14px;box-shadow:0 4px 18px rgba(0,0,0,.12)}
+.edit-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.edit-actions span{margin-right:auto;font-size:14px;font-weight:700}
+.edit-actions button{font:inherit;font-size:14px;font-weight:700;padding:8px 12px;border-radius:10px;
+  border:1px solid var(--line);cursor:pointer}
+.ghost{background:transparent;color:var(--text)}
+.danger{background:var(--danger);color:#fff;border-color:var(--danger)!important}
+.danger:disabled{opacity:.4;cursor:default}
+.edit-msg{margin:0 0 8px;font-size:13px;color:var(--muted)}
+.edit-msg:empty{display:none}
+.token-box{margin-bottom:10px;font-size:13px}
+.token-box input{display:block;width:100%;margin-top:6px;padding:10px;border-radius:10px;border:1px solid var(--line);
+  background:var(--bg);color:var(--text);font:inherit}
+.token-note{margin:6px 0 0;color:var(--muted)}
+.code-box button{font:inherit;font-weight:700;padding:8px 14px;border-radius:10px;border:0;background:var(--btn);color:var(--btn-text)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">오늘의 경제 3</p>
+  <h1>11월 5일 목요일</h1>
+  <p class="range">수집 범위: 11/4(수) 08:00 ~ 11/5(목) 08:00 한국시간</p>
+</header>
+
+
+<ol class="toc">
+  
+  <li><a href="#a1"><span class="n">1</span><span>미국 공장주문·물류 지표 호조…수요 견조</span></a></li>
+  
+  <li><a href="#a2"><span class="n">2</span><span>민주당 의회 장악에도 美 증시 급등, 유가 8% 폭락</span></a></li>
+  
+  <li><a href="#a3"><span class="n">3</span><span>AMD 3분기 실적 호조…데이터센터가 성장 견인</span></a></li>
+  
+</ol>
+
+
+<article class="card" id="a1">
+  <div class="meta">
+    <span class="num">1</span>
+    <span class="chip macro">거시·정책</span>
+    
+    <span class="score">64점</span>
+  </div>
+  <h2>미국 공장주문·물류 지표 호조…수요 견조</h2>
+  
+  <p class="scorebar">파급력 27/40 · 한국 연관성 12/25 · 새로움 14/20 · 후속성 11/15</p>
+  
+  <p class="what">미국의 공장 주문과 물류 지표가 모두 탄탄하게 나오면서, 개장 전 증시 분위기가 조심스럽게 긍정적이에요.</p>
+  
+  <ul class="details">
+    <li>9월 공장 주문이 전달보다 1.8% 늘어, 4월 이후 가장 강한 수치였어요.</li><li>운송 장비 주문이 4.6% 뛰면서 전체 증가를 이끌었어요.</li><li>10월 미국 물류관리자지수(LMI)는 70.7로 올랐어요. 화물 활동이 활발하고 연말 쇼핑철을 앞두고 창고가 더 차고 있다는 뜻이에요.</li><li>주문과 물류가 활발하면 기업의 앞으로 매출 전망이 좋아서, 제조업체와 운송 관련 기업의 실적 전망을 받쳐줄 수 있어요.</li><li>수요가 튼튼하면 정책 당국이 금융 여건을 빡빡하게 유지하는 데 덜 부담을 느낄 수 있어요. 그래서 앞으로의 금리 전망에도 영향을 줘요.</li><li>다만 이 강세가 정책이나 비용 부담과 부딪히기 전까지 얼마나 갈지는 아직 몰라요. 이번 주 후반 미국 고용·임금 지표가 이 분위기를 시험할 거예요.</li><li>개장 전 주목 종목으로는 맥도날드가 있어요. 3분기 순이익과 조정 주당순이익은 예상보다 좋았지만 매출은 예상에 못 미쳤고, 분기 배당금은 4% 올렸어요.</li><li>에머슨 일렉트릭은 4분기 기초 수주가 14% 늘었고 배당을 7% 올렸어요. 2027년 매출은 약 5% 성장을 예상해요.</li>
+  </ul>
+  
+  
+  <details class="glossary">
+    <summary>용어 풀이</summary>
+    <dl>
+      <dt>물류관리자지수(LMI)</dt><dd>물류 담당자들에게 물어 화물 운송·재고·창고 상황을 숫자로 만든 지표로, 높을수록 물류 활동이 활발하다는 뜻이에요.</dd><dt>공장 주문</dt><dd>공장이 받은 새 주문 금액으로, 앞으로 제조업 생산과 매출이 어떨지 보여주는 신호예요.</dd>
+    </dl>
+  </details>
+  
+  <div class="korea"><strong>한국엔?</strong>미국 제조업 수요가 탄탄하면 한국의 자동차·기계 같은 대미 수출에 도움이 될 수 있지만, 미국의 높은 금리가 길어지면 원화에는 부담이 될 수도 있어요.</div>
+  
+  <div class="src">
+    <span>출처: Yahoo Finance</span>
+    <span>
+      
+      <a class="btn" href="https://finance.yahoo.com/markets/stocks/articles/us-stock-market-today-p-130949203.html" target="_blank" rel="noopener">원문 보기 · Yahoo Finance</a>
+    </span>
+  </div>
+</article>
+
+<article class="card" id="a2">
+  <div class="meta">
+    <span class="num">2</span>
+    <span class="chip market">시장</span>
+    
+    <span class="score">85점</span>
+  </div>
+  <h2>민주당 의회 장악에도 美 증시 급등, 유가 8% 폭락</h2>
+  
+  <p class="scorebar">파급력 37/40 · 한국 연관성 17/25 · 새로움 19/20 · 후속성 12/15</p>
+  
+  <p class="what">미국 중간선거에서 민주당이 상·하원을 모두 차지했는데도, 투자자들이 주식·채권·금 등을 일제히 사들이며 시장이 크게 올랐어요.</p>
+  
+  <ul class="details">
+    <li>선거 결과가 알려진 화요일 밤 늦게는 나스닥 선물이 최대 2.5% 떨어졌어요. 하지만 수요일 나스닥은 1.4% 오르며 마감했어요.</li><li>S&amp;P 500은 1.6%, 다우지수는 3% 올랐어요. 다우는 지난해 4월 이후 최고의 하루를 보냈어요.</li><li>S&amp;P 500의 11개 업종 중 9개가 올랐어요. 경기소비재가 4.2% 올랐고, 에너지는 4.8% 내렸어요.</li><li>국제 유가가 급락해 브렌트유와 WTI가 각각 약 8% 떨어졌어요. 이것도 시장 분위기를 밝게 만든 요인이었어요.</li><li>달러는 9월 30일 이후 가장 약했고, 멕시코·칠레 페소 등 신흥국 통화가 강세였어요. 미국 국채 금리는 전 구간에서 0.03~0.07%포인트 내렸어요.</li><li>금은 3.5% 올라 온스당 4,000달러 위로 돌아왔고, 비트코인은 3% 올라 8만 달러를 넘었어요.</li><li>칼럼은 의회 권력 구도가 확실해져 예측하기 쉬워졌고, 급진적인 정책이 나올 가능성이 줄었다고 해석해요. 또 대통령 임기 2년 차에는 증시가 약했던 경우가 많아 반등의 눈높이가 낮았다고도 해요.</li><li>개별 종목에서는 대형 헬스케어주가 두 자릿수 상승을 보였지만 CVS는 12.5% 내렸고, 데이터센터·방산주도 하락했어요.</li><li>다른 지역 증시는 유럽이 1.8%, 중국이 2.3% 올랐고, 일본은 1.5% 내렸어요.</li>
+  </ul>
+  
+  
+  <details class="glossary">
+    <summary>용어 풀이</summary>
+    <dl>
+      <dt>중간선거</dt><dd>미국 대통령 임기 중간에 치르는 선거로, 상·하원 의원 등을 새로 뽑아요.</dd><dt>레임덕</dt><dd>임기 후반에 대통령의 힘이 약해지는 현상이에요.</dd><dt>브렌트유·WTI</dt><dd>각각 유럽과 미국에서 기준이 되는 국제 원유 가격이에요.</dd>
+    </dl>
+  </details>
+  
+  <div class="korea"><strong>한국엔?</strong>달러가 약해지고 신흥국 통화가 강세를 보인 만큼 원화 환율에 우호적으로 작용할 수 있고, 유가 급락은 에너지 수입 비용 부담을 덜어줄 수 있어요.</div>
+  
+  <div class="src">
+    <span>출처: Yahoo Finance (Reuters)</span>
+    <span>
+      
+      <a class="btn" href="https://finance.yahoo.com/markets/articles/trading-day-oil-tanks-stocks-220426496.html" target="_blank" rel="noopener">원문 보기 · Yahoo Finance</a>
+    </span>
+  </div>
+</article>
+
+<article class="card" id="a3">
+  <div class="meta">
+    <span class="num">3</span>
+    <span class="chip corporate">기업·산업</span>
+    
+    <span class="score">65점</span>
+  </div>
+  <h2>AMD 3분기 실적 호조…데이터센터가 성장 견인</h2>
+  
+  <p class="scorebar">파급력 22/40 · 한국 연관성 22/25 · 새로움 10/20 · 후속성 11/15</p>
+  
+  <p class="what">AMD가 3분기에 시장 예상을 웃도는 실적을 내놨고, 매출이 1년 전보다 45% 늘며 데이터센터 사업이 성장을 이끌었어요.</p>
+  
+  <ul class="details">
+    <li>조정 주당순이익은 2.09달러로 예상치 1.95달러보다 높았어요.</li><li>매출은 133억 8천만 달러로 예상치 130억 9천만 달러를 웃돌았어요. 1년 전 92억 5천만 달러에서 45% 늘었어요.</li><li>데이터센터 매출은 1년 전의 거의 2배로 뛰었어요. 전체 매출에서 차지하는 비중도 47%에서 64%로 커졌어요.</li><li>4분기 매출은 약 170억 달러를 예상해요. 시장 평균 예상치 162억 달러보다 높아요. 반면 매출총이익률 전망은 55%로 예상치 55.3%를 살짝 밑돌았어요.</li><li>리사 수 CEO는 2027년에 서버 매출이 2배로 늘고, AI 데이터센터 성장도 90일 전 전망보다 더 빨라질 거라고 말했어요. 스스로 움직이는 &#39;AI 에이전트&#39; 앱이 늘면서 서버용 CPU 수요가 커지고 있다고 해요.</li><li>엔비디아와 경쟁하는 AI 시스템 &#39;헬리오스&#39;는 메타, 마이크로소프트, 앤트로픽, 오픈AI, 오라클이 쓰기 시작했어요. AMD는 앤트로픽에 최대 50억 달러를 투자하기로 했어요.</li><li>반면 PC·게임용 칩 부문 매출은 8% 줄어든 37억 달러였고, 게임 매출은 40% 급감했어요. 메모리 등 부품값이 오르면서 PC 시장이 약해진 영향이에요.</li><li>주가는 올해 약 125% 올랐어요. AI 과잉 투자 우려로 업계 전체가 팔리면서 3거래일 연속 내렸다가 화요일에 반등했어요. 실적 발표 직후 시간외 거래에서 8% 올랐지만, 선거 결과가 나오며 상승분이 줄었어요.</li><li>앞서 인텔도 데이터센터 매출이 78% 늘었다고 밝혔어요. 하지만 약한 전망과 수요 대응 능력에 대한 우려로 금요일 주가가 29% 폭락했어요.</li>
+  </ul>
+  
+  
+  <details class="glossary">
+    <summary>용어 풀이</summary>
+    <dl>
+      <dt>데이터센터</dt><dd>서버와 AI 연산 장비를 모아 두고 클라우드·AI 서비스를 돌리는 대형 시설이에요.</dd><dt>에이전틱 AI</dt><dd>사람이 일일이 시키지 않아도 스스로 여러 단계의 작업을 해내는 AI예요.</dd><dt>CPU와 GPU</dt><dd>CPU는 컴퓨터의 범용 두뇌 역할을 하는 칩이고, GPU는 AI 학습처럼 계산이 많은 일에 쓰는 칩이에요.</dd><dt>매출총이익률</dt><dd>매출에서 제품을 만드는 데 든 원가를 빼고 남는 이익의 비율이에요.</dd>
+    </dl>
+  </details>
+  
+  <div class="korea"><strong>한국엔?</strong>수 CEO가 올해 대만과 한국을 오가며 SK하이닉스·삼성전자 같은 메모리 업체와 만났다고 하니, AMD의 내년 공급 확대는 한국 메모리 업체의 수요에도 연결될 수 있어요.</div>
+  
+  <div class="src">
+    <span>출처: CNBC</span>
+    <span>
+      
+      <a class="btn" href="https://www.cnbc.com/2026/11/03/amd-amd-q3-earnings-report-2026-.html" target="_blank" rel="noopener">원문 보기 · CNBC</a>
+    </span>
+  </div>
+</article>
+
+
+
+
+
+
+<footer class="site">
+  <p>5개 매체(Bloomberg·Nikkei Asia·CNN Business·CNBC·Yahoo Finance)의 기사 중 파급력(40)·한국 연관성(25)·새로움(20)·후속성(15) 점수로 골랐어요. 특이사항 표시 기사는 무료 본문 없이 3개 이상 매체를 교차 확인해 요약했어요.</p>
+  <p><a href="../index.html">지난 뉴스 모아보기 →</a></p>
+</footer>
+
+</div>
+</body>
+</html>
