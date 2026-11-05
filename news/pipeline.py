@@ -11,6 +11,7 @@ from .timewin import Window, label, plausibly_in_window
 OUTLET_BY_DOMAIN = {d: (name, paid) for d, name, paid in config.OUTLETS}
 PRIMARY_BY_DOMAIN = {d: name for d, name, *_ in config.PRIMARY_SOURCES}
 MIN_FULLTEXT_CHARS = 1200      # 이보다 짧으면 '본문 전체'로 인정하지 않아요
+MIN_FOCUS_CHARS = 500          # 페이지에서 이 이슈에 해당하는 부분이 이보다 짧으면 그 페이지는 쓰지 않아요
 MAX_DOC_CHARS = 30_000         # 요약 단계에 넘기는 본문 최대 길이
 
 
@@ -127,17 +128,58 @@ def find_source(win: Window, issue: dict) -> dict | None:
     return src
 
 
+def paragraphs(text: str) -> list[str]:
+    return [p.strip() for p in text.split("\n") if p.strip()]
+
+
+def focus(win: Window, issue: dict, doc: dict) -> dict | None:
+    """같은 이슈인지 확인하고, 페이지에서 이 이슈에 해당하는 문단만 남겨요.
+
+    한 페이지에 여러 소식이 섞인 경우(라이브 블로그, 'Stock market today', 시황 모음)가 있어서,
+    이슈와 상관없는 문단(다른 기업, 유가, 코인 등)이 요약에 섞이지 않게 해요.
+    반환: 이 이슈 부분만 남긴 문서 (multi_story: 여러 소식이 섞인 페이지였는지) 또는 None
+    """
+    paras = paragraphs(doc["text"][:MAX_DOC_CHARS])
+    v, _ = claude.call_json(
+        f"3. 같은 기사·관련 문단 확인 ({issue['issue_id']})", config.SOURCE_MODEL,
+        [{"role": "user", "content": prompts.focus_prompt(win.describe(), issue, doc, paras)}],
+        system=prompts.CHECK_SYSTEM, max_tokens=1500,
+    )
+    if not v.get("same_story") or v.get("in_window") is False:
+        print(f"      · 다른 기사로 판단: {str(v.get('reason', ''))[:80]}")
+        return None
+    picked = v.get("paragraphs", "all")
+    if isinstance(picked, list):
+        keep = sorted({int(i) for i in picked if isinstance(i, (int, str)) and str(i).isdigit() and int(i) < len(paras)})
+    else:
+        keep = list(range(len(paras)))
+    text = "\n".join(paras[i] for i in keep)
+    multi = bool(v.get("multi_story"))
+    if len(text) < MIN_FOCUS_CHARS:
+        print(f"      · 이 이슈에 해당하는 부분이 {len(text)}자뿐이라 쓰지 않아요")
+        return None
+    if multi or len(keep) < len(paras):
+        print(f"      · {'여러 소식이 섞인 페이지 → ' if multi else ''}관련 문단 {len(keep)}/{len(paras)}개만 사용")
+    return {**doc, "text": text, "raw_head": doc["text"][:600], "multi_story": multi}
+
+
 def _find_source(win: Window, issue: dict) -> dict | None:
     tried: set[str] = set()
+    fallback: tuple[int, dict] | None = None  # 여러 소식이 섞인 페이지 (기사 하나짜리를 못 찾으면 이 이슈 부분만 사용)
 
     # 1단계(바로): 이슈에 이미 있는 무료 매체 기사 (Yahoo Finance, CNBC)
     for a in issue["articles"]:
         if a["domain"] in config.FULLTEXT_FREE_DOMAINS:
             tried.add(claude.normalize_url(a["url"]))
             doc = read(a["url"])
-            if len(doc["text"]) >= MIN_FULLTEXT_CHARS:
+            if len(doc["text"]) < MIN_FULLTEXT_CHARS:
+                continue
+            f = focus(win, issue, doc)
+            if f and not f["multi_story"]:
                 print("    → 1단계: 무료 본문")
-                return full_source(1, doc)
+                return full_source(1, f)
+            if f and fallback is None:
+                fallback = (1, f)
 
     # 1·2단계(검색): 같은 이슈의 무료 기사나 원래 발표 자료 찾기
     for url in search_free_sources(win, issue):
@@ -147,16 +189,19 @@ def _find_source(win: Window, issue: dict) -> dict | None:
         doc = read(url)
         if len(doc["text"]) < MIN_FULLTEXT_CHARS:
             continue
-        v, _ = claude.call_json(
-            f"3. 같은 기사 확인 ({issue['issue_id']})", config.SOURCE_MODEL,
-            [{"role": "user", "content": prompts.verify_prompt(win.describe(), issue, doc)}],
-            system=prompts.CHECK_SYSTEM, max_tokens=500,
-        )
-        if v.get("same_story") and v.get("in_window") is not False:
-            tier = 2 if domain_of(doc["url"]) in config.PRIMARY_DOMAINS else 1
+        f = focus(win, issue, doc)
+        if not f:
+            continue
+        tier = 2 if domain_of(doc["url"]) in config.PRIMARY_DOMAINS else 1
+        if not f["multi_story"]:
             print(f"    → {tier}단계: {'원래 발표 자료' if tier == 2 else '무료 본문'}")
-            return full_source(tier, doc)
-        print(f"      · 다른 기사로 판단: {str(v.get('reason', ''))[:80]}")
+            return full_source(tier, f)
+        if fallback is None:
+            fallback = (tier, f)
+
+    if fallback:
+        print(f"    → {fallback[0]}단계: 여러 소식이 섞인 페이지에서 이 이슈 부분만 사용")
+        return full_source(*fallback)
 
     # 3단계: 3개 이상 매체 교차 확인
     return cross_check(win, issue)
@@ -191,12 +236,13 @@ def full_source(tier: int, doc: dict) -> dict:
         name = PRIMARY_BY_DOMAIN.get(dom, dom)
     else:
         name = OUTLET_BY_DOMAIN.get(dom, (dom, False))[0]
-        m = WIRE_RE.search(doc["text"][:600])
+        m = WIRE_RE.search(doc.get("raw_head") or doc["text"][:600])
         if dom == "finance.yahoo.com" and m:
             name = f"Yahoo Finance ({m.group(1)})"
     return {
         "tier": tier, "source_name": name,
-        "document": {"url": doc["url"], "title": doc.get("title", ""), "text": doc["text"]},
+        "document": {"url": doc["url"], "title": doc.get("title", ""), "text": doc["text"],
+                     "excerpt": bool(doc.get("multi_story"))},
         "link_url": doc["url"], "link_outlet": name.split(" (")[0], "link_paid": False,
         "tier3": None,
     }
@@ -317,7 +363,8 @@ def write(win: Window, chosen: list[tuple[dict, dict]], failed: list[dict] | Non
         if doc:
             content.append({"type": "document",
                             "source": {"type": "text", "media_type": "text/plain", "data": doc["text"][:MAX_DOC_CHARS]},
-                            "title": f"기사 {n} 본문 — {src['source_name']}"})
+                            "title": f"기사 {n} 본문 — {src['source_name']}"
+                                     + (" (여러 소식이 섞인 페이지에서 이 이슈 부분만 발췌)" if doc.get("excerpt") else "")})
     content.append({"type": "text", "text": prompts.write_prompt(label(win.issue_date), items, ex_items)})
 
     data, _ = claude.call_json(

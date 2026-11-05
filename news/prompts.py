@@ -112,21 +112,37 @@ Return ONLY: ```json
 CHECK_SYSTEM = f"""You check news sources carefully and answer in compact JSON only. {SAFETY}"""
 
 
-def verify_prompt(window_desc: str, issue: dict, doc: dict) -> str:
+def focus_prompt(window_desc: str, issue: dict, doc: dict, paras: list[str]) -> str:
+    titles = "\n".join(f"- [{a['outlet']}] {a['title']}" for a in issue.get("articles", []))
+    numbered = "\n".join(f"[{i}] {p}" for i, p in enumerate(paras))
     return f"""Story we want: {issue['summary_en']}
+Headlines about it:
+{titles or '(none)'}
 Time window: {window_desc}
 
 Candidate page: {doc['url']}
 Page title: {doc.get('title', '')}
 Page date (metadata, may be empty): {doc.get('date', '')}
-Page text (beginning):
+Page text as numbered paragraphs:
 <<<
-{doc['text'][:6000]}
+{numbered}
 >>>
 
-Does this page report the SAME story (same event, not just the same topic)? Was it published inside the
-time window (true/false, or null if unknown)?
-Return ONLY: {{"same_story": true, "in_window": true, "reason": "short"}}"""
+Answer four things:
+1. same_story: does this page report the SAME story (same event, not just the same topic)?
+2. in_window: was it published inside the time window? (true/false, or null if unknown)
+3. multi_story: true if the page bundles several separate news items (live blog, "stock market today" page,
+   market wrap, newsletter, roundup); false if it is one article about one story.
+4. paragraphs: the numbers of the paragraphs that are about THIS story only:
+   the event itself, its numbers, causes or background that the page explicitly ties to this story,
+   reactions and analysis of it, and its direct effects.
+   Leave out paragraphs about other news even if they are on the same page or the same day
+   (other companies' results, other markets or commodities, crypto, unrelated policy remarks),
+   and captions, ads, "read more" links and author bios.
+   Use "all" if every paragraph qualifies.
+
+Return ONLY: {{"same_story": true, "in_window": true, "multi_story": false, "paragraphs": "all", "reason": "short"}}
+(paragraphs is either "all" or a list of numbers such as [0, 1, 4])"""
 
 
 def crosscheck_prompt(window_desc: str, issue: dict, readings: list[dict]) -> str:
@@ -180,6 +196,13 @@ def write_prompt(issue_label: str, items: list[dict], excluded: list[dict] | Non
 
 ## 제외된 이슈 (점수는 높았지만 요약할 자료를 찾지 못해 빠진 것)
 {ex_lines}
+
+## 가장 먼저 지킬 것: 기사 하나 = 이슈 하나
+- 각 기사는 위에 적힌 '이슈' 한 가지만 다뤄요.
+- 첨부 본문은 이 이슈에 해당하는 문단만 골라 둔 거예요. 그래도 이슈와 직접 관련 없는 소식
+  (다른 기업 실적, 다른 시장·원자재·코인 움직임, 따로 일어난 사건, 관련 없는 발언)이 보이면 넣지 않아요.
+- 원인·배경·전망은 본문이 이 이슈와 직접 연결해 설명한 것만 써요.
+- 아래 규칙 4에서 details를 늘리는 것도 이 이슈 안의 내용에만 해당해요.
 
 ## 작성 규칙
 1. title_ko: 자연스러운 한국어 기사 제목 (직역 금지, 40자 이내)
