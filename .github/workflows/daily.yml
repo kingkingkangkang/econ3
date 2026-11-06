@@ -47,8 +47,17 @@ jobs:
           git config user.name "econ3-bot"
           git config user.email "econ3-bot@users.noreply.github.com"
           git add docs
-          git commit -m "오늘의 경제 3: $(date +%F)" || echo "변경 없음"
-          git push
+          git commit -m "오늘의 경제 3: $(date +%F)" || { echo "변경 없음"; exit 0; }
+          # GitHub 쪽 일시 오류(예: fatal error in commit_refs)나 그사이 올라온 변경이 있으면 기다렸다가 다시 시도해요
+          for wait in 15 30 45 60 75 0; do
+            if git push; then exit 0; fi
+            [ "$wait" = 0 ] && break
+            echo "::warning::기록 저장 실패 — ${wait}초 뒤 다시 시도해요"
+            sleep "$wait"
+            git pull --rebase || git rebase --abort || true
+          done
+          echo "::error::기록 저장이 6번 모두 실패했어요. GitHub 쪽 문제일 가능성이 커요 (githubstatus.com 확인 후 다시 실행)."
+          exit 1
 
       - uses: actions/upload-pages-artifact@v3
         with:
