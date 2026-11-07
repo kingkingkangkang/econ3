@@ -194,7 +194,7 @@ def write_prompt(issue_label: str, items: list[dict], excluded: list[dict] | Non
 
 {chr(10).join(blocks)}
 
-## 제외된 이슈 (점수는 높았지만 요약할 자료를 찾지 못해 빠진 것)
+## 제외된 이슈 (점수는 높았지만 요약할 자료를 찾지 못했거나, 점수가 비슷한 다른 소식에 밀려 빠진 것)
 {ex_lines}
 
 ## 가장 먼저 지킬 것: 기사 하나 = 이슈 하나

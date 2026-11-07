@@ -6,7 +6,7 @@ from typing import Callable
 from urllib.parse import urlparse
 
 from . import claude, config, fetch, prompts
-from .timewin import Window, label, plausibly_in_window
+from .timewin import Window, label, page_time, plausibly_in_window
 
 OUTLET_BY_DOMAIN = {d: (name, paid) for d, name, paid in config.OUTLETS}
 PRIMARY_BY_DOMAIN = {d: name for d, name, *_ in config.PRIMARY_SOURCES}
@@ -51,9 +51,11 @@ def collect(win: Window) -> list[dict]:
                 skipped_date += 1
                 continue
             name, paid = OUTLET_BY_DOMAIN[dom]
+            when_date, when_time = page_time(hit["page_age"])  # 점수가 비슷할 때 '더 최근' 판단용
             found[key] = {
                 "id": f"c{len(found) + 1}", "outlet": name, "domain": dom, "paid": paid,
                 "title": hit["title"], "url": hit["url"], "published": hit["page_age"], "group": group,
+                "when_date": when_date, "when_time": when_time,
             }
     out = list(found.values())
     print(f"  · 후보 {len(out)}개 (날짜가 범위 밖이라 제외 {skipped_date}개)")
@@ -318,32 +320,113 @@ def select(issues: list[dict], source_fn: Callable[[dict], dict | None]) -> list
         tried.add(issue["issue_id"])
         return source_fn(issue)
 
-    # (1) 분야별 최고점 1개씩. 지표 발표일엔 그 지표가 거시 1순위.
+    def take(issue, group, src):
+        chosen.append((issue, src))
+        # 같은 '점수가 비슷한 그룹'에서 점수는 더 높았지만 순서에서 밀린 이슈를 기록해요 → '제외' 칸에 표시
+        for x in group:
+            if x is not issue and x["total"] > issue["total"] and x["issue_id"] not in tried:
+                x.setdefault("pushed_by", (issue, beat_reason(issue, x)))
+
+    # (1) 분야별 1개씩. 지표 발표일엔 그 지표(CPI·고용·FOMC)가 거시 1순위.
     for cat in config.CATEGORIES:
-        pool = [i for i in issues if i["category"] == cat]
-        pool.sort(key=lambda i: ((not i["major_release"]) if cat == "macro" else False, sort_key(i)))
-        for issue in pool:
-            if issue["total"] < config.WEAK_SCORE and not issue["major_release"]:
-                break  # 약한 후보뿐 → 다른 분야 차점으로 채워요
-            src = attempt(issue)
-            if src:
-                chosen.append((issue, src))
-                break
+        pool = sorted((i for i in issues if i["category"] == cat), key=sort_key)
+        majors = [i for i in pool if i["major_release"]] if cat == "macro" else []
+        others = [i for i in pool if i not in majors and i["total"] >= config.WEAK_SCORE]  # 약하면 다른 분야로 채워요
+        for issue, group in [(m, []) for m in majors] + tie_order(others):
             if attempts >= config.MAX_SOURCING_ATTEMPTS:
                 break
+            src = attempt(issue)
+            if src:
+                take(issue, group, src)
+                break
 
-    # (2) 빈자리는 점수 순으로 채우되 한 분야 최대 2개
-    for issue in sorted((i for i in issues if i["issue_id"] not in tried), key=sort_key):
-        if len(chosen) >= 3 or attempts >= config.MAX_SOURCING_ATTEMPTS:
+    # (2) 빈자리는 점수 순으로 채우되 한 분야 최대 2개 (여기서도 점수가 비슷하면 같은 순서 규칙)
+    while len(chosen) < 3 and attempts < config.MAX_SOURCING_ATTEMPTS:
+        full = {c["category"] for c, _ in chosen
+                if sum(1 for d, _ in chosen if d["category"] == c["category"]) >= config.MAX_PER_CATEGORY}
+        eligible = sorted((i for i in issues if i["issue_id"] not in tried and i["category"] not in full), key=sort_key)
+        picked = False
+        for issue, group in tie_order(eligible):
+            if attempts >= config.MAX_SOURCING_ATTEMPTS:
+                break
+            src = attempt(issue)
+            if src:
+                take(issue, group, src)
+                picked = True
+                break
+        if not picked:
             break
-        if sum(1 for c, _ in chosen if c["category"] == issue["category"]) >= config.MAX_PER_CATEGORY:
-            continue
-        src = attempt(issue)
-        if src:
-            chosen.append((issue, src))
+
+    # 밀리기만 하고 끝내 다시 시도되지 않은 이슈 → 제외 이유
+    picked_ids = {c["issue_id"] for c, _ in chosen}
+    for i in issues:
+        by = i.pop("pushed_by", None)
+        if by and i["issue_id"] not in picked_ids and i["issue_id"] not in tried:
+            winner, why = by
+            i["exclude_reason"] = why
+            i["pushed_by_id"] = winner["issue_id"]
 
     chosen.sort(key=lambda p: (config.CATEGORIES.index(p[0]["category"]), sort_key(p[0])))
     return chosen[:3]
+
+
+# ── 점수가 비슷할 때의 순서 ─────────────────────────────
+def issue_recency(issue: dict) -> tuple:
+    """이슈에 묶인 기사 중 가장 최근 기사의 (미국 날짜, 정확한 시각). 모르면 None."""
+    dated = [a for a in issue.get("articles", []) if a.get("when_date")]
+    if not dated:
+        return None, None
+    last = max(a["when_date"] for a in dated)
+    times = [a["when_time"] for a in dated if a["when_date"] == last and a.get("when_time")]
+    return last, (max(times) if times else None)
+
+
+def newer(a: dict, b: dict) -> int:
+    """a가 확실히 더 최근이면 1, b가 확실히 더 최근이면 -1, 비교할 수 없거나 비슷하면 0."""
+    (da, ta), (db, tb) = issue_recency(a), issue_recency(b)
+    if ta and tb:
+        hours = (ta - tb).total_seconds() / 3600
+        return 1 if hours >= config.RECENT_MIN_HOURS else -1 if hours <= -config.RECENT_MIN_HOURS else 0
+    # 날짜만 알 때: 매체마다 날짜 기준 시간대가 달라서(미국 동부·UTC·일본/한국 시간) 하루 차이는 믿기 어려워요.
+    # 이틀 이상 차이 날 때만 비교해요 (주말이 낀 월요일 범위에서 주로 쓰여요).
+    if da and db and abs((da - db).days) >= 2:
+        return 1 if da > db else -1
+    return 0
+
+
+def prefer(a: dict, b: dict) -> int:
+    """점수가 비슷한 두 이슈 중 a가 먼저면 1: 발표·결정 > 발언·전망 > 분석 → 더 최근 → 점수."""
+    ra, rb = config.EVENT_RANK.get(a["event_type"], 3), config.EVENT_RANK.get(b["event_type"], 3)
+    if ra != rb:
+        return 1 if ra < rb else -1
+    n = newer(a, b)
+    if n:
+        return n
+    return (a["total"] > b["total"]) - (a["total"] < b["total"])
+
+
+def beat_reason(winner: dict, loser: dict) -> str:
+    gap = loser["total"] - winner["total"]
+    if config.EVENT_RANK.get(winner["event_type"], 3) < config.EVENT_RANK.get(loser["event_type"], 3):
+        kw, kl = config.EVENT_KIND_KO.get(winner["event_type"], ""), config.EVENT_KIND_KO.get(loser["event_type"], "")
+        return f"점수가 비슷한({gap}점 차) 소식 중 '{kw}'이 '{kl}'보다 우선이라 밀림"
+    return f"점수가 비슷한({gap}점 차) 더 최근 소식이 있어 밀림"
+
+
+def tie_order(pool: list[dict]) -> list[tuple[dict, list[dict]]]:
+    """점수 순 목록을 시도 순서로: 1등과 3점 이내 그룹은 규칙대로 다시 줄 세우고, 나머지도 같은 방식으로 반복.
+
+    반환: [(이슈, 그 이슈가 속한 그룹)]
+    """
+    out, rest = [], sorted(pool, key=sort_key)
+    while rest:
+        top = rest[0]["total"]
+        group = [i for i in rest if i["total"] >= top - config.TIE_SCORE_GAP]
+        rest = [i for i in rest if i["total"] < top - config.TIE_SCORE_GAP]
+        wins = {id(i): sum(1 for j in group if j is not i and prefer(i, j) > 0) for i in group}
+        group.sort(key=lambda i: (-wins[id(i)], sort_key(i)))
+        out += [(i, group) for i in group]
+    return out
 
 
 # ── 4. 한국어 요약 ─────────────────────────────────────
@@ -372,12 +455,13 @@ def write(win: Window, chosen: list[tuple[dict, dict]], failed: list[dict] | Non
         system=prompts.WRITE_SYSTEM, max_tokens=15000,
     )
     written = {int(a.get("slot", 0)): a for a in data.get("articles", [])}
-    out = []
+    out, slot_of = [], {}
     for n, (issue, src) in enumerate(chosen, 1):
         w = written.get(n)
         if not w:
             print(f"  · 경고: 기사 {n} 요약이 비어 있어 건너뛰어요")
             continue
+        slot_of[issue["issue_id"]] = len(out) + 1
         notice = (w.get("notice") or "").strip() if src["tier"] == 3 else ""
         if src["tier"] == 3 and not notice:
             notice = default_notice(src)
@@ -411,7 +495,8 @@ def write(win: Window, chosen: list[tuple[dict, dict]], failed: list[dict] | Non
         "summary_ko": str(ko.get(ex["id"], {}).get("summary_ko", "")).strip() or i["summary_en"],
         "about_ko": str(ko.get(ex["id"], {}).get("about_ko", "")).strip(),
         "outlets": sorted({a["outlet"] for a in i["articles"]}),
-        "reason": i.get("exclude_reason", ""),
+        "reason": i.get("exclude_reason", "") + (
+            f" → 선정된 {slot_of[i['pushed_by_id']]}번 기사" if i.get("pushed_by_id") in slot_of else ""),
     } for ex, i in zip(ex_items, failed)]
     return out, excluded
 

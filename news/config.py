@@ -76,6 +76,10 @@ SCORE_LABELS = {"impact": "파급력", "korea": "한국 연관성", "novelty": "
 WEAK_SCORE = 50          # 분야 최고점이 이보다 낮으면 다른 분야 차점으로 채워요
 MAX_PER_CATEGORY = 2     # 한 분야 최대 개수
 MAX_SOURCING_ATTEMPTS = 8  # 본문 찾기를 시도할 이슈 최대 개수 (비용 상한)
+TIE_SCORE_GAP = 3        # 1등과 이 점수 이내면 '점수가 비슷한' 그룹: 발표·결정 > 발언·전망 > 분석 → 더 최근 → 점수 순
+RECENT_MIN_HOURS = 6     # 둘 다 정확한 시각을 알 때, 이만큼 이상 차이 나야 '더 최근'으로 봐요
+#                          날짜만 알면 이틀 이상 차이 날 때만 비교 (매체마다 날짜 기준 시간대가 달라서)
+EVENT_KIND_KO = {"decision": "실제 발표·결정", "statement": "발언·전망", "analysis": "분석·해설"}
 TIER3_MIN_OUTLETS = 3    # 3단계(특이사항) 허용 최소 매체 수
 
 # ── 도구 한도 ───────────────────────────────────────────

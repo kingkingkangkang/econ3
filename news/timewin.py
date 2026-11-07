@@ -91,6 +91,24 @@ def parse_page_age(text: str, now: datetime | None = None) -> date | None:
     return None
 
 
+def page_time(text: str, now: datetime | None = None) -> tuple[date | None, datetime | None]:
+    """기사 시각을 아는 만큼만: (미국 동부 날짜, 정확한 시각).
+
+    '5 hours ago'처럼 몇 시간 전인지 나오면 시각까지, 날짜만 나오면 시각은 None, 모르면 (None, None).
+    """
+    import re
+    d = parse_page_age(text, now)
+    if d is None:
+        return None, None
+    m = re.match(r"(\d+)\s+(minute|hour)s?\s+ago", (text or "").strip().lower())
+    if not m:
+        return d, None
+    now = (now or datetime.now(KST)).astimezone(ET)
+    n = int(m.group(1))
+    t = now - (timedelta(minutes=n) if m.group(2) == "minute" else timedelta(hours=n))
+    return t.date(), t
+
+
 def plausibly_in_window(page_age: str, win: "Window") -> bool:
     """날짜를 모르면 통과. 알면 수집 범위 앞뒤 하루 여유를 두고 판단 (최종 판단은 점수 단계에서)."""
     d = parse_page_age(page_age, win.end)
