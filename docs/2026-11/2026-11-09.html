@@ -90,6 +90,7 @@ h1{margin:4px 0 2px;font-size:26px;line-height:1.3}
 .notice strong{color:var(--warn)}
 .notice p{margin:4px 0 0}
 .src{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;font-size:13px;color:var(--muted)}
+.src-link{margin-left:auto;display:inline-flex;align-items:center;gap:6px}  /* 줄이 넘어가도 원문 보기 버튼은 항상 오른쪽 */
 .btn{display:inline-flex;align-items:center;gap:6px;text-decoration:none;background:var(--btn);color:var(--btn-text);
   padding:8px 12px;border-radius:10px;font-size:14px;font-weight:700}
 .paid{font-size:11px;font-weight:800;padding:2px 6px;border-radius:6px;background:var(--warn-bg);color:var(--warn)}
@@ -203,8 +204,8 @@ body.editing .day-link{cursor:pointer;border-style:dashed}
   <div class="korea"><strong>한국엔?</strong>미국이 금리를 더 올릴 가능성이 커지면 한국 금리와 원/달러 환율에도 부담이 될 수 있어요.</div>
   
   <div class="src">
-    <span>출처: Yahoo Finance (Reuters)</span>
-    <span>
+    <span class="src-name">출처: Yahoo Finance (Reuters)</span>
+    <span class="src-link">
       
       <a class="btn" href="https://finance.yahoo.com/economy/policy/articles/traders-raise-bets-fed-rate-134402668.html" target="_blank" rel="noopener">원문 보기 · Yahoo Finance</a>
     </span>
@@ -239,8 +240,8 @@ body.editing .day-link{cursor:pointer;border-style:dashed}
   <div class="korea"><strong>한국엔?</strong>미국 금리가 더 오를 수 있다는 신호는 한국은행의 금리 결정과 원/달러 환율에도 영향을 줄 수 있어요.</div>
   
   <div class="src">
-    <span>출처: CNBC</span>
-    <span>
+    <span class="src-name">출처: CNBC</span>
+    <span class="src-link">
       
       <a class="btn" href="https://www.cnbc.com/2026/11/06/fed-daly-interest-rates-inflation.html" target="_blank" rel="noopener">원문 보기 · CNBC</a>
     </span>
@@ -275,8 +276,8 @@ body.editing .day-link{cursor:pointer;border-style:dashed}
   <div class="korea"><strong>한국엔?</strong>SK하이닉스와 삼성전자가 크게 떨어진 만큼, 미국 AI 투자 분위기에 따라 한국 반도체 업종과 증시도 크게 흔들릴 수 있어요.</div>
   
   <div class="src">
-    <span>출처: CNBC</span>
-    <span>
+    <span class="src-name">출처: CNBC</span>
+    <span class="src-link">
       
       <a class="btn" href="https://www.cnbc.com/2026/11/06/tech-stocks-sk-hynix-samsung-softbank.html" target="_blank" rel="noopener">원문 보기 · CNBC</a>
     </span>
