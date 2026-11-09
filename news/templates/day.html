@@ -45,8 +45,8 @@
   <div class="notice"><strong>※ 특이사항</strong><p>{{ a.notice }}</p></div>
   {% endif %}
   <div class="src">
-    <span>출처: {{ a.source_name }}</span>
-    <span>
+    <span class="src-name">출처: {{ a.source_name }}</span>
+    <span class="src-link">
       {% if a.link_paid %}<span class="paid">유료</span>{% endif %}
       <a class="btn" href="{{ a.link_url }}" target="_blank" rel="noopener">원문 보기 · {{ a.link_outlet }}</a>
     </span>
