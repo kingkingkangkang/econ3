@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>11/24(화) 오늘의 경제 3</title>
+<script>
+// 지우기·복구 직후 10분 동안은 다른 페이지도 브라우저 캐시 대신 최신 버전으로 열어요.
+(function(){
+  try{
+    var t = +localStorage.getItem("econ3.editedAt") || 0;
+    if(!t || Date.now() - t > 600000) return;
+    var q = new URLSearchParams(location.search);
+    if(q.get("v") === String(t)) return;
+    q.set("v", String(t));
+    location.replace(location.pathname + "?" + q.toString() + location.hash);
+  }catch(e){}
+})();
+</script>
+<style>
+:root{
+  --bg:#f5f4f0; --card:#ffffff; --text:#1d1d1f; --muted:#6b6b70; --line:#e6e4de;
+  --macro:#2f5fd0; --macro-bg:#e8eefc;
+  --market:#1f8a5b; --market-bg:#e3f4ec;
+  --corporate:#7a4cc2; --corporate-bg:#f0e9fb;
+  --korea-bg:#f2f6ff; --korea-line:#c9d7f7;
+  --warn:#9a5b00; --warn-bg:#fff4e0; --warn-line:#f1d29a;
+  --btn:#1d1d1f; --btn-text:#ffffff;
+  --danger:#c62828;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#121214; --card:#1c1c1f; --text:#ececef; --muted:#a0a0a8; --line:#2c2c31;
+    --macro:#8fb0ff; --macro-bg:#1d2a48;
+    --market:#6fd3a3; --market-bg:#173327;
+    --corporate:#c4a5f5; --corporate-bg:#2c2140;
+    --korea-bg:#1a2233; --korea-line:#2e3d5e;
+    --warn:#f3c26b; --warn-bg:#33270f; --warn-line:#5a4519;
+    --btn:#ececef; --btn-text:#121214;
+    --danger:#ff6b6b;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR","Malgun Gothic",sans-serif;
+  font-size:16px;line-height:1.65;word-break:keep-all;overflow-wrap:anywhere}
+.wrap{max-width:640px;margin:0 auto;padding:20px 16px 48px}
+a{color:inherit}
+.eyebrow{margin:0;font-size:13px;font-weight:700;letter-spacing:.02em;color:var(--muted)}
+h1{margin:4px 0 2px;font-size:26px;line-height:1.3}
+.range{margin:0;font-size:13px;color:var(--muted)}
+.toc{margin:18px 0 8px;padding:0;list-style:none;display:grid;gap:6px}
+.toc a{display:flex;gap:10px;align-items:baseline;text-decoration:none;padding:10px 12px;background:var(--card);
+  border:1px solid var(--line);border-radius:12px;font-size:15px;line-height:1.45}
+.toc .n{font-weight:800;color:var(--muted);min-width:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 16px;margin-top:14px;scroll-margin-top:12px}
+.meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.num{width:24px;height:24px;border-radius:50%;background:var(--text);color:var(--card);display:inline-flex;
+  align-items:center;justify-content:center;font-size:13px;font-weight:800}
+.chip{font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px}
+.chip.macro{color:var(--macro);background:var(--macro-bg)}
+.chip.market{color:var(--market);background:var(--market-bg)}
+.chip.corporate{color:var(--corporate);background:var(--corporate-bg)}
+.chip.warn{color:var(--warn);background:var(--warn-bg)}
+.card h2{margin:10px 0 6px;font-size:20px;line-height:1.4}
+.score{margin-left:auto;font-size:13px;font-weight:800;padding:3px 9px;border-radius:999px;background:var(--bg);border:1px solid var(--line)}
+.scorebar{margin:-2px 0 8px;font-size:12px;color:var(--muted)}
+.excluded{margin-top:22px;padding:16px;background:var(--card);border:1px dashed var(--line);border-radius:16px}
+.excluded h3{margin:0;font-size:17px}
+.ex-desc{margin:2px 0 8px;font-size:13px;color:var(--muted)}
+.excluded ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.excluded li{padding-top:10px;border-top:1px solid var(--line)}
+.excluded li:first-child{border-top:0;padding-top:0}
+.ex-sum{margin:6px 0 2px;font-weight:600;font-size:15px}
+.ex-about{margin:2px 0 4px;font-size:14px}
+.ex-src{color:var(--muted);font-size:12px}
+.ex-reason{margin:0;font-size:13px;color:var(--muted)}
+.what{margin:0 0 8px;font-weight:600}
+.details{margin:0;padding-left:18px}
+.details li{margin:4px 0}
+.glossary{margin-top:10px;font-size:14px;border-top:1px dashed var(--line);padding-top:8px}
+.glossary summary{cursor:pointer;color:var(--muted);font-weight:700}
+.glossary dt{font-weight:700;margin-top:6px}
+.glossary dd{margin:0;color:var(--muted)}
+.korea{margin-top:12px;padding:10px 12px;background:var(--korea-bg);border:1px solid var(--korea-line);border-radius:10px;font-size:15px}
+.korea strong{color:var(--macro);margin-right:4px}
+.notice{margin-top:10px;padding:10px 12px;background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:10px;font-size:14px}
+.notice strong{color:var(--warn)}
+.notice p{margin:4px 0 0}
+.src{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;font-size:13px;color:var(--muted)}
+.src-link{margin-left:auto;display:inline-flex;align-items:center;gap:6px}  /* 줄이 넘어가도 원문 보기 버튼은 항상 오른쪽 */
+.btn{display:inline-flex;align-items:center;gap:6px;text-decoration:none;background:var(--btn);color:var(--btn-text);
+  padding:8px 12px;border-radius:10px;font-size:14px;font-weight:700}
+.paid{font-size:11px;font-weight:800;padding:2px 6px;border-radius:6px;background:var(--warn-bg);color:var(--warn)}
+.empty{margin-top:18px;padding:16px;background:var(--card);border:1px solid var(--line);border-radius:16px}
+.site{margin-top:28px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+.site a{font-weight:700}
+.list{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:10px}
+.list a{display:block;text-decoration:none;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.list .d{font-weight:800}
+.list .t{display:block;font-size:14px;color:var(--muted);margin-top:2px}
+.code-box{margin-top:16px;padding:16px;background:var(--card);border:2px solid var(--macro);border-radius:16px}
+.code-box code{display:block;margin:8px 0;padding:10px;background:var(--bg);border-radius:8px;font-size:14px;word-break:break-all}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.top-actions{display:flex;gap:8px;flex:none}
+.crumb{margin:0 0 10px;font-size:13px}
+.crumb a{color:var(--muted);text-decoration:none;font-weight:700}
+a.icon-btn{text-decoration:none;position:relative}
+.badge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:999px;
+  background:var(--danger);color:#fff;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+.chip{color:var(--muted);background:var(--bg)}
+.m-title{font-weight:600;color:var(--muted);font-size:14px;margin-left:4px}
+.list .t.sub{font-size:13px}
+.muted-line{font-style:italic}
+.hint-line{margin:12px 0 0;font-size:13px;color:var(--muted)}
+.trash-item{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.trash-item .t{display:block;font-size:14px;color:var(--muted);margin-top:2px}
+.trash-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.trash-head .d{font-weight:800}
+
+.icon-btn{flex:none;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;
+  border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
+.icon-btn[aria-pressed="true"]{background:var(--text);color:var(--card)}
+.pick{display:none}
+body.editing .pick{display:inline-block;width:16px;height:16px;border:2px solid var(--muted);border-radius:4px;
+  margin-right:8px;vertical-align:-3px}
+body.editing .day .sel .pick,body.editing .day.whole .pick{background:var(--danger);border-color:var(--danger)}
+body.editing .day .sel,body.editing .day.whole .t{text-decoration:line-through;color:var(--danger)}
+body.editing .trash-item{cursor:pointer}
+body.editing .trash-item.sel{border-color:var(--text);box-shadow:inset 0 0 0 1px var(--text)}
+body.editing .trash-item.sel .trash-head .pick,body.editing .tline.sel .pick{background:var(--text);border-color:var(--text)}
+body.editing .tline.sel{color:var(--text);font-weight:600}
+.tline .left{font-size:12px;margin-left:4px}
+.primary{background:var(--btn);color:var(--btn-text);border-color:var(--btn)!important}
+.primary:disabled{opacity:.4;cursor:default}
+body.editing .day-link{cursor:pointer;border-style:dashed}
+.edit-help{margin:12px 0 0;font-size:13px;color:var(--muted)}
+.edit-bar{position:sticky;bottom:12px;margin-top:16px;padding:12px;background:var(--card);border:1px solid var(--line);
+  border-radius:14px;box-shadow:0 4px 18px rgba(0,0,0,.12)}
+.edit-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.edit-actions span{margin-right:auto;font-size:14px;font-weight:700}
+.edit-actions button{font:inherit;font-size:14px;font-weight:700;padding:8px 12px;border-radius:10px;
+  border:1px solid var(--line);cursor:pointer}
+.ghost{background:transparent;color:var(--text)}
+.danger{background:var(--danger);color:#fff;border-color:var(--danger)!important}
+.danger:disabled{opacity:.4;cursor:default}
+.edit-msg{margin:0 0 8px;font-size:13px;color:var(--muted)}
+.edit-msg:empty{display:none}
+.token-box{margin-bottom:10px;font-size:13px}
+.token-box input{display:block;width:100%;margin-top:6px;padding:10px;border-radius:10px;border:1px solid var(--line);
+  background:var(--bg);color:var(--text);font:inherit}
+.token-note{margin:6px 0 0;color:var(--muted)}
+.code-box button{font:inherit;font-weight:700;padding:8px 14px;border-radius:10px;border:0;background:var(--btn);color:var(--btn-text)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">오늘의 경제 3</p>
+  <h1>11월 24일 화요일</h1>
+  <p class="range">수집 범위: 11/23(월) 08:00 ~ 11/24(화) 08:00 한국시간</p>
+</header>
+
+
+<ol class="toc">
+  
+  <li><a href="#a1"><span class="n">1</span><span>뉴욕 연은 총재 &#34;물가 잡을 일 남았다&#34;</span></a></li>
+  
+  <li><a href="#a2"><span class="n">2</span><span>달러 강세 계속된다, 골드만 &#34;내년엔 약세&#34;</span></a></li>
+  
+  <li><a href="#a3"><span class="n">3</span><span>엔비디아 CEO 복귀에 뉴욕증시 급반등</span></a></li>
+  
+</ol>
+
+
+<article class="card" id="a1">
+  <div class="meta">
+    <span class="num">1</span>
+    <span class="chip macro">거시·정책</span>
+    
+    <span class="score">76점</span>
+  </div>
+  <h2>뉴욕 연은 총재 &#34;물가 잡을 일 남았다&#34;</h2>
+  
+  <p class="scorebar">파급력 34/40 · 한국 연관성 15/25 · 새로움 13/20 · 후속성 14/15</p>
+  
+  <p class="what">존 윌리엄스 뉴욕 연방준비은행 총재가 월요일 연설에서 물가를 목표 수준으로 되돌리기 위해 아직 할 일이 남았다고 말했어요.</p>
+  
+  <ul class="details">
+    <li>윌리엄스 총재는 물가를 2%로 되돌리는 일이 &#39;100% 필수&#39;라고 했어요. 경제가 계속 성장하는 만큼 필요한 조치는 시간을 두고 나눠서 해도 된다는 뜻도 내비쳤어요.</li><li>물가는 2027년에 목표인 2%에 가까워지고, 이듬해에 목표에 닿을 것으로 봤어요.</li><li>지금의 물가 압력은 이란 분쟁, AI 설비 투자에 따른 물건 수요, 관세에서 나온다고 설명했어요. 관세 영향은 대체로 줄었다고 했어요.</li><li>AI가 물가를 누르는 힘으로 작용하고 있지만, 물가 상승을 오래 끌고 갈 원인이 될 근거는 &#39;거의 없다&#39;고 말했어요.</li><li>연준 안에서는 금리를 얼마나 빨리 올릴지 의견이 갈려요. 일부는 더 공격적인 인상을 주장하고, 윌리엄스 총재 등은 속도를 조절하는 접근을 강조해요.</li><li>다음 연방공개시장위원회(FOMC) 회의는 12월 8~9일이에요. 시장은 현재 3.75~4%인 기준금리를 0.25%포인트 올릴 가능성을 100% 반영하고 있어요.</li><li>이번 발언은 12월 결정 전 연준 인사의 마지막 주요 발언이 될 것으로 예상돼요. 총재는 12월 회의를 직접 언급하지 않았어요.</li>
+  </ul>
+  
+  
+  <details class="glossary">
+    <summary>용어 풀이</summary>
+    <dl>
+      <dt>FOMC</dt><dd>미국 연준에서 기준금리를 정하는 회의예요.</dd><dt>기준금리 목표 범위</dt><dd>연준이 정책으로 유도하려는 금리의 상단과 하단이에요.</dd>
+    </dl>
+  </details>
+  
+  <div class="korea"><strong>한국엔?</strong>미국이 금리를 더 올리면 한국은행도 금리 결정에서 부담을 느끼고 원화 약세 압력이 커질 수 있어요.</div>
+  
+  <div class="src">
+    <span class="src-name">출처: CNBC</span>
+    <span class="src-link">
+      
+      <a class="btn" href="https://www.cnbc.com/2026/11/23/john-williams-fed-inflation-rate-hikes.html" target="_blank" rel="noopener">원문 보기 · CNBC</a>
+    </span>
+  </div>
+</article>
+
+<article class="card" id="a2">
+  <div class="meta">
+    <span class="num">2</span>
+    <span class="chip market">시장</span>
+    
+    <span class="score">58점</span>
+  </div>
+  <h2>달러 강세 계속된다, 골드만 &#34;내년엔 약세&#34;</h2>
+  
+  <p class="scorebar">파급력 22/40 · 한국 연관성 18/25 · 새로움 10/20 · 후속성 8/15</p>
+  
+  <p class="what">골드만삭스가 앞으로 몇 달 동안 달러 강세가 이어지다가 2027년에는 약해질 것으로 전망했어요.</p>
+  
+  <ul class="details">
+    <li>블룸버그 달러 스팟 지수는 11월에 약 2% 올라 3개월 연속 상승했어요. 2024년 12월 이후 가장 긴 상승 흐름이에요.</li><li>연준이 9월에 3년 만에 금리를 올린 뒤 매파적(금리 인상에 적극적인) 태도를 보인 것이 달러를 떠받치고 있어요.</li><li>AI 투자 열풍이 미국 주식시장으로 자금을 끌어들인 점도 달러 강세 요인으로 꼽혔어요.</li><li>골드만삭스의 트리베디 전략가는 연준의 긴축이 앞으로 몇 달 동안 달러를 지지하고, 성장과 신흥국 통화에는 부담이 될 것이라고 봤어요.</li><li>다만 내년에는 시장이 연준의 금리 인상을 지나치게 많이 반영하고 있어서 달러가 &#39;소폭 약해질&#39; 것으로 봤어요. 에너지 가격이 내려가면 물가도 목표인 2%에 가까워진다고 내다봤어요.</li><li>트레이더들은 2027년 9월까지 약 0.7%포인트(70bp)의 금리 인상을 반영하고 있어요.</li><li>유로는 앞으로 3개월 안에 1.08달러, 또는 그 아래로 약해질 수 있다고 전망했어요. 월요일 유로는 1.0881달러까지 떨어져 2025년 4월 이후 최저였어요.</li>
+  </ul>
+  
+  
+  <details class="glossary">
+    <summary>용어 풀이</summary>
+    <dl>
+      <dt>매파적</dt><dd>물가를 잡기 위해 금리를 높이는 쪽을 선호하는 태도예요.</dd><dt>bp(베이시스포인트)</dt><dd>금리 변화를 나타내는 단위로, 100bp가 1%포인트예요.</dd><dt>RSI</dt><dd>가격이 얼마나 빠르게 올랐는지 보여주는 지표로, 보통 70을 넘으면 많이 올랐다고 봐요.</dd>
+    </dl>
+  </details>
+  
+  <div class="korea"><strong>한국엔?</strong>달러 강세가 이어지면 원화 가치가 약해져 수입 물가에 부담이 될 수 있어요.</div>
+  
+  <div class="src">
+    <span class="src-name">출처: Yahoo Finance</span>
+    <span class="src-link">
+      
+      <a class="btn" href="https://finance.yahoo.com/markets/currencies/articles/goldman-sachs-sees-us-dollar-183336171.html" target="_blank" rel="noopener">원문 보기 · Yahoo Finance</a>
+    </span>
+  </div>
+</article>
+
+<article class="card" id="a3">
+  <div class="meta">
+    <span class="num">3</span>
+    <span class="chip corporate">기업·산업</span>
+    
+    <span class="score">89점</span>
+  </div>
+  <h2>엔비디아 CEO 복귀에 뉴욕증시 급반등</h2>
+  
+  <p class="scorebar">파급력 38/40 · 한국 연관성 22/25 · 새로움 20/20 · 후속성 9/15</p>
+  
+  <p class="what">엔비디아가 사임했던 젠슨 황을 CEO로 복귀시키자 월요일 AI 관련주를 중심으로 미국 증시가 크게 올랐어요.</p>
+  
+  <ul class="details">
+    <li>황 CEO는 중국 스파이로 의심되는 여성과의 불륜을 인정한 뒤 물러났다가 이번에 다시 자리로 돌아왔어요.</li><li>다우지수는 1,447.98포인트 올라 49,595.31, S&amp;P 500은 326.78포인트 올라 7,237.17, 나스닥은 1,471.83포인트 올라 24,089.56을 기록했어요. 지난주 말 약세를 만회한 흐름이에요.</li><li>한 투자 전문가는 이날 상승이 대체로 황 CEO의 복귀 때문이며, AI 관련주 전반의 회복으로 이어졌다고 설명했어요.</li><li>엔비디아와 다른 반도체 주식은 월가에서 비중이 큰 종목이에요. 이날 이전에는 엔비디아 주가가 1% 움직이면 S&amp;P 500에 미치는 영향이 500개 기업 중 두 곳을 빼고 모든 기업보다 컸어요.</li><li>AI 관련주와 미국 증시는 여름 이후 주 단위는 물론 시간 단위로도 크게 오르내렸어요.</li><li>전문가는 AI 기업의 수익성, 금리 상승, 성장 둔화 가능성, 높은 주가 수준에 대한 우려가 여전하다고 했어요. 민주당이 장악한 미국 의회와 주 의회가 AI 규제를 강화할 수 있다는 걱정도 크다고 해요.</li>
+  </ul>
+  
+  
+  <details class="glossary">
+    <summary>용어 풀이</summary>
+    <dl>
+      <dt>밸류에이션</dt><dd>기업의 주가가 실제 가치에 비해 높은지 낮은지 따져보는 개념이에요.</dd>
+    </dl>
+  </details>
+  
+  <div class="korea"><strong>한국엔?</strong>엔비디아 같은 AI 반도체 기업의 주가 흐름은 반도체 관련 한국 기업의 주가에도 영향을 줄 수 있어요.</div>
+  
+  <div class="src">
+    <span class="src-name">출처: Yahoo Finance</span>
+    <span class="src-link">
+      
+      <a class="btn" href="https://ca.finance.yahoo.com/news/futures-market-points-rebound-u-132701025.html" target="_blank" rel="noopener">원문 보기 · Yahoo Finance</a>
+    </span>
+  </div>
+</article>
+
+
+
+
+
+
+<footer class="site">
+  <p>5개 매체(Bloomberg·Nikkei Asia·CNN Business·CNBC·Yahoo Finance)의 기사 중 파급력(40)·한국 연관성(25)·새로움(20)·후속성(15) 점수로 골랐어요. 특이사항 표시 기사는 무료 본문 없이 3개 이상 매체를 교차 확인해 요약했어요.</p>
+  <p><a href="../index.html">지난 뉴스 모아보기 →</a></p>
+</footer>
+
+</div>
+</body>
+</html>
